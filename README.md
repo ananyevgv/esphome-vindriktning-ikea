@@ -1,7 +1,7 @@
 # esphome-vindriktning-ikea
 | 1                                                    | 2                                                   | 
 |------------------------------------------------------|-----------------------------------------------------|
-| ![1](https://github.com/ananyevgv/esphome-vindriktning-ikea/blob/main/1704567361805.jpg) | ![2](https://github.com/ananyevgv/esphome-vindriktning-ikea/blob/main/1704567361805.jpg) |
+| ![1](https://github.com/ananyevgv/esphome-vindriktning-ikea/blob/main/1704567361805.jpg) | ![2](https://github.com/ananyevgv/esphome-vindriktning-ikea/blob/main/1704567697413.jpg) |
 
 
 <img src=" height="300">
