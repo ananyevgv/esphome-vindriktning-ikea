@@ -1,6 +1,8 @@
 # esphome-vindriktning-ikea
---------------------------------------------|
-| "https://github.com/ananyevgv/esphome-vindriktning-ikea/blob/main/1704567361805.jpg) |"https://github.com/ananyevgv/esphome-vindriktning-ikea/blob/main/1704567361805.jpg |
+| 1                                                    | 2                                                   | 
+|------------------------------------------------------|-----------------------------------------------------|
+| ![1](https://github.com/ananyevgv/esphome-vindriktning-ikea/blob/main/1704567361805.jpg) | ![2](https://github.com/ananyevgv/esphome-vindriktning-ikea/blob/main/1704567361805.jpg) |
+
 
 <img src=" height="300">
 Мой вариант vindriktning-ikea основан на https://modkam.ru/2023/10/30/ikea-vindriktning/
