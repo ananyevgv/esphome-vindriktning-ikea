@@ -1,0 +1,243 @@
+display:
+  - platform: st7735
+    model: "INITR_18BLACKTAB"
+    reset_pin: GPIO0
+    cs_pin: D0 #GPIO26
+    dc_pin: D8 #GPIO5
+    rotation: 0
+    device_width: 128
+    device_height: 160
+    col_start: 0
+    row_start: 0
+    eight_bit_color: true
+    update_interval: 1s
+    id: my_display
+    pages:
+      - id: page1
+        lambda: |-
+          static int i = 0;
+          i++;
+          if ((i % 2) == 0) {
+            it.strftime(0, 0, id(font2),"%H", id(sntp_time).now());
+            it.strftime(43, 0, id(font2),"%M", id(sntp_time).now());
+          }  
+          else  {
+            it.strftime(0, 0, id(font2),"%H:", id(sntp_time).now());
+            it.strftime(43, 0, id(font2),"%M", id(sntp_time).now());
+          } 
+          
+          uint16_t var = (id(WiFiP).state);
+          switch (var) {
+            case 0 ... 24: it.image(108, 0, id(i_wifi1), red); break;
+            case 25 ... 49: it.image(108, 0, id(i_wifi2), yellow); break;
+            case 50 ... 74: it.image(108, 0, id(i_wifi3), lgreen); break;
+            case 75 ... 100: it.image(108, 0, id(i_wifi4), green); break;
+            default: it.image(108, 0, id(i_wifioff), red); break;
+          }
+          if ((id(elevation).state) > 0) {
+            id(g_sun).next_frame();
+            it.image(82, 0, id(g_sun), yellow);
+            }
+          else {
+            it.image(82, 0, id(g_moon), white);
+            id(g_moon).next_frame();
+            }
+          it.image(22, 39, id(i_weather_dust), white);
+          it.print(44, 39, id(font0), white, "частицы");
+
+          if (id(vent_bin).state) {
+          it.image(0, 39, id(g_fan));
+          id(g_fan).next_frame();
+          }
+
+          it.printf(0, 59, id(font0), white, "PM1    %4.0f μg/m³", id(pm1).state);
+
+          uint16_t vpm2 = (id(pm2).state);
+          switch (vpm2) {
+            case 0 ... 30: it.printf(0, 72, id(font0), green, "PM2.5 %4.0f μg/m³", id(pm2).state); break;
+            case 31 ... 60: it.printf(0, 72, id(font0), lgreen, "PM2.5 %4.0f μg/m³", id(pm2).state); break;
+            case 61 ... 90: it.printf(0, 72, id(font0), yellow, "PM2.5 %4.0f μg/m³", id(pm2).state); break;
+            case 91 ... 120: it.printf(0, 72, id(font0), lyellow, "PM2.5 %4.0f μg/m³", id(pm2).state); break;
+            case 121 ... 250: it.printf(0, 72, id(font0), red, "PM2.5 %4.0f μg/m³", id(pm2).state); break;
+            case 251 ... 1000: it.printf(0, 72, id(font0), tred, "PM2.5 %4.0f μg/m³", id(pm2).state); break;
+            default: it.printf(0, 72, id(font0), blue, "PM2.5 %4.0f μg/m³", id(pm2).state); break;
+          }
+          uint16_t vpm10 = (id(pm10).state);
+          switch (vpm10) {
+            case 0 ... 50: it.printf(0, 85, id(font0), green, "PM10  %4.0f μg/m³", id(pm10).state); break;
+            case 51 ... 100: it.printf(0, 85, id(font0), lgreen, "PM10  %4.0f μg/m³", id(pm10).state); break;
+            case 101 ... 250: it.printf(0, 85, id(font0), yellow, "PM10  %4.0f μg/m³", id(pm10).state); break;
+            case 251 ... 350: it.printf(0, 85, id(font0), lyellow, "PM10  %4.0f μg/m³", id(pm10).state); break;
+            case 351 ... 430: it.printf(0, 85, id(font0), red, "PM10  %4.0f μg/m³", id(pm10).state); break;
+            case 431 ... 1000: it.printf(0, 85, id(font0), tred, "PM10  %4.0f μg/m³", id(pm10).state); break;
+            default: it.printf(0, 85, id(font0), blue, "PM10  %4.0f μg/m³", id(pm10).state); break;
+          }
+          uint16_t vt = (id(bme680_t).state);
+          switch (vt) {
+            case 0 ... 22: 
+              it.image(0, 100, id(i_thermometer_low), blue);
+              it.printf(20, 97, id(font1), blue, "%2.1f°", id(bme680_t).state);
+              break;
+            case 23 ... 25: 
+              it.image(0, 100, id(i_thermometer), green);
+              it.printf(20, 97, id(font1), green, "%2.1f°", id(bme680_t).state);
+              break;
+            case 26 ... 28: 
+              it.image(0, 100, id(i_thermometer), yellow);
+              it.printf(20, 97, id(font1), yellow, "%2.1f°", id(bme680_t).state);
+              break;
+            case 29 ... 35: 
+              it.image(0, 100, id(i_thermometer_high), red);
+              it.printf(20, 97, id(font1), red, "%2.1f°", id(bme680_t).state);
+              break;
+            default: 
+              it.image(0, 100, id(i_thermometer_high), tred);
+              it.printf(20, 97, id(font1), tred, "%2.1f°", id(bme680_t).state);
+              break;
+          }
+          uint16_t vh = (id(bme680_h).state);
+          switch (vh) {
+            case 0 ... 30: 
+              it.image(64, 100, id(i_water_percent), red);
+              it.printf(82, 97, id(font1), red, "%3.f%%", id(bme680_h).state);
+              break;
+            case 31 ... 50: 
+              it.image(64, 100, id(i_water_percent), yellow);
+              it.printf(82, 97, id(font1), yellow, "%3.0f%%", id(bme680_h).state);
+              break;
+            case 51 ... 60: 
+              it.image(64, 100, id(i_water_percent), green);
+              it.printf(82, 97, id(font1), green, "%3.0f%%", id(bme680_h).state);
+              break;
+            case 61 ... 70: 
+              it.image(64, 100, id(i_water_percent), yellow);
+              it.printf(82, 97, id(font1), yellow, "%3.0f%%", id(bme680_h).state);
+              break;
+            case 71 ... 100: 
+              it.image(64, 100, id(i_water_percent), blue);
+              it.printf(82, 97, id(font1), blue, "%3.0f%%", id(bme680_h).state);
+              break;
+            default: 
+              it.image(64, 100, id(i_water_percent), tred);
+              it.printf(82, 97, id(font1), tred, "%3.0f%%", id(bme680_h).state);
+              break;
+          }
+          uint16_t viaq = (id(bme680_iaq).state);
+          switch (viaq) {
+            case 0 ... 50: 
+              it.image(64, 120, id(i_IAQ), green);
+              it.printf(85, 117, id(font1), green, "%3.0f", id(bme680_iaq).state);
+              break;
+            case 51 ... 100: 
+              it.image(64, 120, id(i_IAQ), green);
+              it.printf(85, 117, id(font1), green, "%3.0f", id(bme680_iaq).state);
+              break;
+            case 101 ... 150: 
+              it.image(64, 120, id(i_IAQ), lgreen);
+              it.printf(85, 117, id(font1), lgreen, "%3.0f", id(bme680_iaq).state);
+              break;
+            case 151 ... 200: 
+              it.image(64, 120, id(i_IAQ), yellow);
+              it.printf(85, 117, id(font1), yellow, "%3.0f", id(bme680_iaq).state);
+              break;
+            case 201 ... 250: 
+              it.image(64, 120, id(i_IAQ), lyellow);
+              it.printf(85, 117, id(font1), lyellow, "%3.0f", id(bme680_iaq).state);
+              break;
+            case 251 ... 300: 
+              it.image(64, 120, id(i_IAQ), red);
+              it.printf(85, 117, id(font1), red, "%3.0f", id(bme680_iaq).state);
+              break;
+            case 301 ... 350: 
+              it.image(64, 120, id(i_IAQ), tred);
+              it.printf(85, 117, id(font1), tred, "%3.0f", id(bme680_iaq).state);
+              break;
+            case 351 ... 500: 
+              it.image(64, 120, id(i_IAQ), tred);
+              it.printf(85, 117, id(font1), tred, "%3.0f", id(bme680_iaq).state);
+              break;
+            default: 
+              it.image(64, 120, id(i_IAQ), blue);
+              it.printf(85, 117, id(font1), blue, "%3.0f", id(bme680_iaq).state);
+              break;
+          }
+          uint16_t vp = (id(bme680_p).state);
+          switch (vp) {
+            case 710 ... 730: 
+              it.image(0, 117, id(i_weather_pouring), blue);
+              it.printf(21, 120, id(font1), red, "%3.0f", id(bme680_p).state);
+              break;
+            case 731 ... 740: 
+              it.image(0, 120, id(i_weather_pouring), blue);
+              it.printf(21, 117, id(font1), yellow, "%3.0f", id(bme680_p).state);
+              break;
+            case 741 ... 760: 
+              it.image(0, 120, id(i_cloud_outline), white);
+              it.printf(21, 117, id(font1), green, "%3.0f", id(bme680_p).state);
+              break;
+            case 761 ... 770: 
+              it.image(0, 120, id(i_white_balance_sunny), yellow);
+              it.printf(21, 117, id(font1), yellow, "%3.0f", id(bme680_p).state);
+              break;
+            case 771 ... 780: 
+              it.image(0, 120, id(i_white_balance_sunny), yellow);
+              it.printf(21, 117, id(font1), red, "%3.0f", id(bme680_p).state);
+              break;
+            default: 
+              it.image(0, 120, id(i_white_balance_sunny), tred);
+              it.printf(21, 117, id(font1), tred, "%3.0f", id(bme680_p).state);
+              break;
+          }
+          uint16_t vco2 = (id(bme680_co2).state);
+          switch (vco2) {
+            case 0 ... 600: 
+              it.image(0, 140, id(i_molecule_co2), green);
+              it.printf(21, 137, id(font1), green, "%3.0f", id(bme680_co2).state);
+              break;
+            case 601 ... 1000: 
+              it.image(0, 140, id(i_molecule_co2), lgreen);
+              it.printf(21, 137, id(font1), lgreen, "%3.0f", id(bme680_co2).state);
+              break;
+            case 1001 ... 1500: 
+              it.image(0, 140, id(i_molecule_co2), yellow);
+              it.printf(21, 137, id(font1), yellow, "%3.0f", id(bme680_co2).state);
+              break;
+            case 1501 ... 2000: 
+              it.image(0, 140, id(i_molecule_co2), lyellow);
+              it.printf(21, 137, id(font1), lyellow, "%3.0f", id(bme680_co2).state);
+              break;
+            case 2001 ... 4000: 
+              it.image(0, 140, id(i_molecule_co2), red);
+              it.printf(21, 137, id(font1), red, "%3.0f", id(bme680_co2).state);
+              break;
+            default: 
+              it.image(0, 140, id(i_molecule_co2), tred);
+              it.printf(21, 137, id(font1), tred, "%.0f", id(bme680_co2).state);
+              break;
+          }
+          uint16_t vvoc = (id(bme680_voc).state);
+          switch (vvoc) {
+            case 0 ... 60: 
+              it.image(64, 140, id(i_molecule), green);    
+              it.printf(85, 137, id(font1), green, "%.0f", id(bme680_voc).state);
+            case 61 ... 200: 
+              it.image(64, 140, id(i_molecule), lgreen);    
+              it.printf(85, 137, id(font1), lgreen, "%.0f", id(bme680_voc).state);
+              break;
+            case 201 ... 600: 
+              it.image(64, 140, id(i_molecule), yellow);    
+              it.printf(85, 137, id(font1), yellow, "%.0f", id(bme680_voc).state);
+              break;
+            case 601 ... 2000: 
+              it.image(64, 140, id(i_molecule), lyellow);    
+              it.printf(85, 147, id(font1), lyellow, "%.0f", id(bme680_voc).state);
+              break;
+            case 2001 ... 6000: 
+              it.image(64, 140, id(i_molecule), red);    
+              it.printf(85, 137, id(font1), red, "%.0f", id(bme680_voc).state);
+              break;
+            default: 
+              it.image(64, 140, id(i_molecule), tred);    
+              it.printf(85, 137, id(font1), tred, "%.0f", id(bme680_voc).state);
+              break;
+          }
