@@ -15,16 +15,11 @@ display:
     pages:
       - id: page1
         lambda: |-
+          it.strftime(21, 0, id(font2),"%H %M", id(sntp_time).now());
           static int i = 0;
           i++;
-          if ((i % 2) == 0) {
-            it.strftime(0, 0, id(font2),"%H", id(sntp_time).now());
-            it.strftime(43, 0, id(font2),"%M", id(sntp_time).now());
-          }  
-          else  {
-            it.strftime(0, 0, id(font2),"%H:", id(sntp_time).now());
-            it.strftime(43, 0, id(font2),"%M", id(sntp_time).now());
-          } 
+          if ((i % 2) == 0) 
+            it.print(60, 0, id(font2),":");
           
           uint16_t var = (id(WiFiP).state);
           switch (var) {
