@@ -20,7 +20,7 @@ display:
           i++;
           if ((i % 2) == 0) 
             it.print(60, 0, id(font2),":");
-          
+
           uint16_t var = (id(WiFiP).state);
           switch (var) {
             case 0 ... 24: it.image(108, 0, id(i_wifi1), red); break;
@@ -31,10 +31,10 @@ display:
           }
           if ((id(elevation).state) > 0) {
             id(g_sun).next_frame();
-            it.image(82, 0, id(g_sun), yellow);
+            it.image(0, 15, id(g_sun), yellow);
             }
           else {
-            it.image(82, 0, id(g_moon), white);
+            it.image(0, 15, id(g_moon), white);
             id(g_moon).next_frame();
             }
           it.image(22, 39, id(i_weather_dust), white);
