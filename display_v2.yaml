@@ -225,7 +225,7 @@ display:
               break;
             case 601 ... 2000: 
               it.image(64, 140, id(i_molecule), lyellow);    
-              it.printf(85, 147, id(font1), lyellow, "%.0f", id(bme680_voc).state);
+              it.printf(85, 137, id(font1), lyellow, "%.0f", id(bme680_voc).state);
               break;
             case 2001 ... 6000: 
               it.image(64, 140, id(i_molecule), red);    
