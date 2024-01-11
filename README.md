@@ -13,6 +13,7 @@
 
 # ikea_external_components.yaml
 
+```yaml
 external_components:
   source: github://ananyevgv/esphome-opentherm-khenderick
   components: [opentherm]
@@ -29,3 +30,5 @@ external_components:
       name: "PM 10"
       id: "pm10"
     update_interval: 30s
+```
+
