@@ -15,8 +15,8 @@
 
 ```yaml
 external_components:
-  source: github://ananyevgv/esphome-opentherm-khenderick
-  components: [opentherm]
+  source: github://ananyevgv/esphome-vindriktning-ikea
+  components: [pm1006k]
   refresh: 0s
 
   sensor:
