@@ -10,3 +10,22 @@
 # display_v2.yaml
 <img src="https://github.com/ananyevgv/esphome-vindriktning-ikea/blob/main/v2.jpg" height="300" alt="v2">
 <img src="https://github.com/ananyevgv/esphome-vindriktning-ikea/blob/main/ikea.jpg" height="300" alt="board">
+
+# ikea_external_components.yaml
+
+external_components:
+  source: github://ananyevgv/esphome-opentherm-khenderick
+  components: [opentherm]
+  refresh: 0s
+  sensor:
+  - platform: pm1006k
+    pm_1_0:   
+      name: "PM 1.0"
+      id: "pm1"
+    pm_2_5:
+      name: "PM 2.5"
+      id: "pm2"
+    pm_10_0:
+      name: "PM 10"
+      id: "pm10"
+    update_interval: 30s
