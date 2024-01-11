@@ -13,7 +13,23 @@
 
 # ikea_external_components.yaml
 
+
+
 ```yaml
+esphome:
+  name: "${name}"
+  on_boot:
+    priority: 240
+    then:
+      - uart.write:
+          id: PM1006k
+          data: [0x11, 0x02, 0x0B, 0x01, 0xE1]
+uart:
+  tx_pin: 3 #1 ножка контроллера
+  rx_pin: 1 #8 ножка контроллера
+  baud_rate: 9600
+  id: PM1006k
+
 external_components:
   source: github://ananyevgv/esphome-vindriktning-ikea
   components: [pm1006k]
