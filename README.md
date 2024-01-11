@@ -18,17 +18,18 @@ external_components:
   source: github://ananyevgv/esphome-opentherm-khenderick
   components: [opentherm]
   refresh: 0s
+
   sensor:
-  - platform: pm1006k
-    pm_1_0:   
-      name: "PM 1.0"
-      id: "pm1"
-    pm_2_5:
-      name: "PM 2.5"
-      id: "pm2"
-    pm_10_0:
-      name: "PM 10"
-      id: "pm10"
-    update_interval: 30s
+    - platform: pm1006k
+      pm_1_0:   
+        name: "PM 1.0"
+        id: "pm1"
+      pm_2_5:
+        name: "PM 2.5"
+        id: "pm2"
+      pm_10_0:
+        name: "PM 10"
+        id: "pm10"
+      update_interval: 30s
 ```
 
