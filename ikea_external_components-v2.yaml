@@ -13,7 +13,7 @@
 ##  |NC|       |36|          |#|     | 3| ruart    |27|          ##
 ##  |39|       |26| cs       |#|     |22| scl      |25|          ##
 ##  |35|       |18| clk      |#|     |21| sda      |32|          ##
-##  |33|       |19| led      |#|     |17|          |12|          ##
+##  |33|       |19| led      |#|     |17| TTP223   |12|          ##
 ##  |34|       |23| mosi     |#|     |16| vent     | 4|          ##
 ##  |14|       | 5| dc       |#|     |GN|          | 0|          ## 
 ##  |NC|       |3V|          |#|     |5V|          | 2|          ##
@@ -34,7 +34,7 @@ esphome:
       - uart.write:
           id: PM1006
           data: [0x11, 0x02, 0x0B, 0x01, 0xE1]
-      - light.turn_on: lcd
+#      - light.turn_on: lcd
 
 esp32:
   board: wemos_d1_mini32
@@ -234,11 +234,23 @@ uart:
 spi:
   clk_pin: D5 #GPIO18
   mosi_pin: D7 #GPIO23
+
 binary_sensor:
   - platform: template
     name: "vent"
     id: vent_bin
     internal: true
+
+  - platform: gpio
+    pin: 17
+    name: "LCD backlight"
+    id: touch_button
+    device_class: light
+    on_press:
+      then:
+        - light.turn_on: lcd
+        - delay: 30s # время работы экрана
+        - light.turn_off: lcd        
 
 text_sensor:
   - platform: wifi_info
@@ -689,3 +701,4 @@ time:
         then:
           - fan.turn_off:
               id: pmvent
+
