@@ -34,7 +34,7 @@ esphome:
       - uart.write:
           id: PM1006
           data: [0x11, 0x02, 0x0B, 0x01, 0xE1]
-#      - light.turn_on: lcd
+      - light.turn_on: lcd
 
 esp32:
   board: wemos_d1_mini32
@@ -216,6 +216,12 @@ image:
 sun:
   latitude: !secret latitude
   longitude: !secret longitude
+  on_sunrise:
+    - then:
+      - light.turn_on: lcd
+  on_sunset:
+    - then:
+      - light.turn_off: lcd
 
 i2c:
    sda: D2 #GPIO21
