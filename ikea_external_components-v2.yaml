@@ -401,6 +401,7 @@ fan:
     output: vent
     name: "vent"
     id: pmvent
+ #   speed_count: 70 # Скорость вентилятора по умолчанию
     on_turn_on:
       lambda: |-
         id(vent_bin).publish_state(true);
