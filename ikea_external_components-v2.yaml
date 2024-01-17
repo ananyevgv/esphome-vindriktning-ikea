@@ -34,7 +34,7 @@ esphome:
       - uart.write:
           id: PM1006
           data: [0x11, 0x02, 0x0B, 0x01, 0xE1]
-      - light.turn_on: lcd
+      - light.turn_on: lcd #включить экран при загрузке
 
 esp32:
   board: wemos_d1_mini32
@@ -216,10 +216,10 @@ image:
 sun:
   latitude: !secret latitude
   longitude: !secret longitude
-  on_sunrise:
+  on_sunrise: #включение экрана при восходе солнца
     - then:
       - light.turn_on: lcd
-  on_sunset:
+  on_sunset: #выключение экрана при закате солнца
     - then:
       - light.turn_off: lcd
 
@@ -389,12 +389,13 @@ sensor:
         case 8 ... 10: return 10; break;
         default: return 10; break;
       }
-    on_value:
-      then:
-        - light.turn_on:
-            id: lcd
-            brightness: !lambda |-
-              return id(brightness).state / 10.0; 
+# Автоматическая регулировка яркости
+#    on_value: 
+#      then:
+ #       - light.turn_on:
+ #           id: lcd
+ #           brightness: !lambda |-
+  #            return id(brightness).state / 10.0; 
 fan:
   - platform: speed
     output: vent
@@ -406,20 +407,13 @@ fan:
     on_turn_off:
       lambda: |-
         id(vent_bin).publish_state(false); 
+        
 light:
- # - platform: monochromatic
-  #  name: "vent"
- #   output: vent
-   # id: pmvent
-   # icon: "mdi:fan"
- #   internal: true
-
   - platform: monochromatic
     name: "light_LCD"
     id: lcd
     output: light_LCD
- #   internal: true
-# Example output entry
+    
 output:
   - platform: esp32_dac
     id: vent
@@ -689,19 +683,6 @@ time:
         then:
           - fan.turn_on:
               id: pmvent
-# изменение скорости врашения              
-           #   brightness: !lambda |-
-           #     return id(brightness).state / 10.0;   
-  # - output.set_level:
-   #     id: dac_output
-   #     level: 50%
-
-# Время запроса данных pm1006k                       
-#      - seconds: 30
-#        then:
-#          - uart.write:
-#              id: PM1006
-#              data: [0x11, 0x02, 0x0B, 0x01, 0xE1]
 # Время выключения вентилятора                  
       - seconds: 32
         then:
