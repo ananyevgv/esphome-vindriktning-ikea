@@ -1,0 +1,691 @@
+# Вариант без родного контроллера питание (+) 4 ножка (-) 2 ножка контроллера
+########### st7735 ################
+## SDA  GPIO23 D7   VSPI MOSI    ##
+## SCLK GPIO18 D5   VSPI SCK     ##
+## D/C  GPIO5  D8   DC           ##
+## RST  GPIO1  RST  RESET        ##
+## CS   GPIO26 D0   chip select  ##
+## LED  GPIO19 D6                ##
+###################################
+
+#################### WEMOS D1 ESP32 ###############################
+##  |GN|       |RS| reset    |#|     | 1| tuart    |GN|          ##
+##  |NC|       |36|          |#|     | 3| ruart    |27|          ##
+##  |39|       |26| cs       |#|     |22| scl      |25|          ##
+##  |35|       |18| clk      |#|     |21| sda      |32|          ##
+##  |33|       |19| led      |#|     |17|          |12|          ##
+##  |34|       |23| mosi     |#|     |16| vent     | 4|          ##
+##  |14|       | 5| dc       |#|     |GN|          | 0|          ## 
+##  |NC|       |3V|          |#|     |5V|          | 2|          ##
+##  | 9|       |13|          |#|     |15|          | 8|          ##
+##  |11|       |10|          |#|     | 7|          | 6|          ##
+###################################################################
+
+substitutions:
+  name: ikea
+  device_description: "ikea"
+
+esphome:
+  name: "${name}"
+  comment: "${device_description}"
+  on_boot:
+    priority: 240
+    then:
+      - uart.write:
+          id: PM1006
+          data: [0x11, 0x02, 0x0B, 0x01, 0xE1]
+      - light.turn_on: lcd
+
+esp32:
+  board: wemos_d1_mini32
+
+# Enable logging
+logger:
+# Enable Home Assistant API 
+api:
+  password: !secret api_pass
+#Включаем загрузку по воздуху
+ota:
+  password: !secret ota_pass
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+external_components:
+  #    type: local
+  #    path: my_components
+ #   components: [ pm1006k ]
+  source: github://ananyevgv/esphome-vindriktning-ikea
+  components: [pm1006k]
+  refresh: 0s
+
+color:
+  - id: red
+    red: 100%
+    green: 30%
+    blue: 30%
+
+  - id: tred
+    red: 100%
+    green: 0%
+    blue: 0%
+
+  - id: yellow
+    red: 100%
+    green: 100%
+    blue: 0%
+
+  - id: lyellow
+    red: 100%
+    green: 50%
+    blue: 0%
+
+  - id: green
+    red: 0%
+    green: 100%
+    blue: 0%
+
+  - id: lgreen
+    red: 70%
+    green: 100%
+    blue: 0% 
+
+  - id: blue
+    red: 0%
+    green: 100%
+    blue: 100%
+
+  - id: white
+    red: 100%
+    green: 100%
+    blue: 100%
+
+  - id: black
+    red: 0%
+    green: 0%
+    blue: 0%  
+
+font:
+  - file:
+      type: gfonts
+      family: Roboto
+    id: font0
+    size: 15
+    glyphs: |-
+      !"%()+=,-_.:³°₂μ0123456789АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧЩЬЫЪЭЮЯABCDEFGHIJKLMNOPQRSTUVWXYZ абвгдеёжзийклмнопрстуфхцчщьыъэюяabcdefghijklmnopqrstuvwxyz'éèàòùç/&ôœìïöñ
+    # gfonts://family[@weight]
+  - file:
+      type: gfonts
+      family: Roboto
+    id: font1
+    size: 20
+  - file:
+      type: gfonts
+      family: Roboto
+      weight: 700
+    id: font2
+    size: 35  
+
+#https://tenor.com/
+animation:
+  - file: "picture/sun-wilao.gif"
+    id: g_sun
+    resize: 20x20
+    type: RGB565
+  - file: "picture/moon-ramadhan.gif"
+    id: g_moon
+    resize: 20x20 
+    type: RGB565
+  - file: "picture/fan.gif"
+    id: g_fan
+    resize: 20x20
+    
+image:
+  - file: mdi:wifi-strength-1
+    id: i_wifi1
+    resize: 20x20 
+  - file: mdi:wifi-strength-2
+    id: i_wifi2
+    resize: 20x20 
+  - file: mdi:wifi-strength-3
+    id: i_wifi3
+    resize: 20x20    
+  - file: mdi:wifi-strength-4
+    id: i_wifi4
+    resize: 20x20 
+  - file: mdi:wifi-strength-off-outline
+    id: i_wifioff
+    resize: 20x20 
+  - file: mdi:white-balance-sunny
+    id: i_white_balance_sunny
+    resize: 20x20
+  - file: mdi:weather-sunny
+    id: i_weather_sunny
+    resize: 20x20 
+  - file: mdi:moon-waning-crescent
+    id: i_moon
+    resize: 20x20 
+
+  - file: "picture/water-percent.png"
+    id: i_water_percent
+    resize: 20x20 
+  - file: mdi:thermometer-low
+    id: i_thermometer_low
+    resize: 20x20 
+  - file: mdi:thermometer
+    id: i_thermometer
+    resize: 20x20 
+  - file: mdi:thermometer-high
+    id: i_thermometer_high
+    resize: 20x20 
+  - file: mdi:snowflake-thermometer
+    id: i_snowflake_thermometer
+    resize: 20x20 
+  - file: mdi:sun-thermometer
+    id: i_sun_thermometer
+    resize: 20x20 
+  - file: mdi:molecule-co2
+    id: ico2
+    resize: 20x20 
+  - file: mdi:weather-dust
+    id: i_weather_dust
+    resize: 20x20 
+  - file: mdi:checkbox-marked-circle-outline
+    id: i_IAQ
+    resize: 20x20 
+  - file: mdi:gauge
+    id: i_gauge
+    resize: 20x20 
+  - file: mdi:cloud-outline
+    id: i_cloud_outline
+    resize: 20x20 
+  - file: mdi:weather-pouring 
+    id: i_weather_pouring
+    resize: 20x20 
+  - file: mdi:weather-partly-cloudy
+    id: i_weather_partly
+    resize: 20x20 
+  - file: mdi:molecule
+    id: i_molecule
+    resize: 20x20     
+  - file: mdi:molecule-co2
+    id: i_molecule_co2
+    resize: 20x20    
+
+sun:
+  latitude: !secret latitude
+  longitude: !secret longitude
+
+i2c:
+   sda: D2 #GPIO21
+   scl: D1 #GPIO22
+   scan: true
+
+bme680_bsec:
+  address: 0x77
+
+uart:
+  tx_pin: 3 #1 ножка контроллера
+  rx_pin: 1 #8 ножка контроллера
+  baud_rate: 9600
+  id: PM1006
+ 
+spi:
+  clk_pin: D5 #GPIO18
+  mosi_pin: D7 #GPIO23
+binary_sensor:
+  - platform: template
+    name: "vent"
+    id: vent_bin
+    internal: true
+
+text_sensor:
+  - platform: wifi_info
+    ip_address:
+      name: "${name} IP Address"
+      icon: mdi:ip
+      id: ip
+    ssid:
+      name: "${name} SSID"
+      icon: mdi:access-point-network
+    mac_address:
+      name: "${name} Mac"
+      icon: mdi:lan
+  - platform: bme680_bsec
+    iaq_accuracy:
+      name: "${name} IAQ Accuracy"
+  - platform: template
+    name: "${name} IAQ Classification"
+    icon: "mdi:checkbox-marked-circle-outline"
+    lambda: |-
+      uint16_t var = (id(bme680_iaq).state);
+      switch (var) {
+        case 0 ... 50: return std::string("Отлично");
+        case 51 ... 100: return std::string("Хорошо");
+        case 101 ... 150: return std::string("Слегка загрязненный");
+        case 151 ... 200: return std::string("Умеренно загрязненный");
+        case 201 ... 250: return std::string("Слегка загрязненный");
+        case 251 ... 300: return std::string("Загрязненный");
+        case 301 ... 350: return std::string("Сильно загрязненный");
+        case 351 ... 500: return std::string("Черезвычайно загрязненный"); 
+        default: return std::string("error");
+      }      
+sensor:
+  - platform: internal_temperature
+    name: "${name} ESP32 T"
+  - platform: esp32_hall
+    name: "${name} hall Sensor"
+    update_interval: 60s
+
+  - platform: wifi_signal
+    name: "${name} Wifi"
+    update_interval: 60s  
+    id: wifi_signal_db
+    entity_category: "diagnostic"
+  - platform: copy # Reports the WiFi signal strength in %
+    source_id: wifi_signal_db
+    name: "${name} WiFi Percent"
+    filters:
+      - lambda: return min(max(2 * (x + 100.0), 0.0), 100.0);
+    unit_of_measurement: "%"
+    entity_category: "diagnostic"
+    id: WiFiP
+  - platform: sun
+    name: "${name} Elevation" 
+    type: elevation
+    id: elevation    
+  - platform: bme680_bsec
+    temperature:
+      name: "${name} T"
+      id: bme680_t
+  #    filters:
+  #    - calibrate_linear:
+   #     - 0.0 -> 0.0
+   #     - 26.7 -> 24.7
+    pressure:
+      name: "${name} P"
+      id: bme680_p
+      filters:  
+        - lambda: return x * 0.75;
+      unit_of_measurement: "mmHg"
+    humidity:
+      name: "${name} H"
+      id: bme680_h
+   #   filters:
+  #    - calibrate_linear:
+  #      - 0.0 -> 0.0
+   #     - 52 -> 54.7
+    iaq:
+      name: "${name} IAQ"
+      id: bme680_iaq
+    iaq_accuracy:
+     name: "${name}  IAQ Accuracy"
+    co2_equivalent:
+      name: "${name} CO₂"
+      id: bme680_co2
+    breath_voc_equivalent:
+      name: "${name} VOC"
+      id: bme680_voc
+    gas_resistance:
+      #Gas resistance in Ω
+      name: "${name}  Gas Resistance"
+      filters:
+        - median
+
+  - platform: bh1750
+    name: "${name} Illuminance"
+    id: i_clock
+    address: 0x23
+    update_interval: 10s
+
+  - platform: absolute_humidity
+    name: "${name} Absolute Humidity"
+    temperature: bme680_t
+    humidity: bme680_h
+
+  - platform: pm1006k
+    pm_1_0:   
+      name: "PM 1.0"
+      id: "pm1"
+    pm_2_5:
+      name: "PM 2.5"
+      id: "pm2"
+    pm_10_0:
+      name: "PM 10"
+      id: "pm10"
+      unit_of_measurement: µg/m³
+    update_interval: 30s
+
+  - platform: template
+    name: "${name} brightness"
+    id: brightness
+    update_interval: 20s
+    internal: true
+    lambda: |-
+      uint16_t brig = (id(i_clock).state) *10;
+      switch (brig) {
+        case 0 ... 1: return 7; break;
+        case 2 ... 4: return 8; break;
+        case 5 ...7: return 9; break;
+        case 8 ... 10: return 10; break;
+        default: return 10; break;
+      }
+    on_value:
+      then:
+        - light.turn_on:
+            id: lcd
+            brightness: !lambda |-
+              return id(brightness).state / 10.0; 
+fan:
+  - platform: speed
+    output: vent
+    name: "vent"
+    id: pmvent
+    on_turn_on:
+      lambda: |-
+        id(vent_bin).publish_state(true);
+    on_turn_off:
+      lambda: |-
+        id(vent_bin).publish_state(false); 
+light:
+ # - platform: monochromatic
+  #  name: "vent"
+ #   output: vent
+   # id: pmvent
+   # icon: "mdi:fan"
+ #   internal: true
+
+  - platform: monochromatic
+    name: "light_LCD"
+    id: lcd
+    output: light_LCD
+ #   internal: true
+# Example output entry
+output:
+  - platform: esp32_dac
+    id: vent
+    pin: GPIO25 # D4 #GPIO16 #5 ножка контроллера
+  - platform: ledc
+    pin: D6 #GPIO19
+    id: light_LCD  
+    inverted: false
+
+button:
+  - platform: restart
+    name: "${name} restart"
+
+display:
+  - platform: st7735
+    model: "INITR_18BLACKTAB"
+    reset_pin: GPIO0
+    cs_pin: D0 #GPIO26
+    dc_pin: D8 #GPIO5
+    rotation: 0
+    device_width: 128
+    device_height: 160
+    col_start: 0
+    row_start: 0
+    eight_bit_color: true
+    update_interval: 1s
+    id: my_display
+    pages:
+      - id: page1
+        lambda: |-
+          it.strftime(21, 0, id(font2),"%H %M", id(sntp_time).now());
+          static int i = 0;
+          i++;
+          if ((i % 2) == 0) 
+            it.print(60, 0, id(font2),":");
+
+          uint16_t var = (id(WiFiP).state);
+          switch (var) {
+            case 0 ... 24: it.image(108, 0, id(i_wifi1), red); break;
+            case 25 ... 49: it.image(108, 0, id(i_wifi2), yellow); break;
+            case 50 ... 74: it.image(108, 0, id(i_wifi3), lgreen); break;
+            case 75 ... 100: it.image(108, 0, id(i_wifi4), green); break;
+            default: it.image(108, 0, id(i_wifioff), red); break;
+          }
+          if ((id(elevation).state) > 0) {
+            id(g_sun).next_frame();
+            it.image(0, 15, id(g_sun), yellow);
+            }
+          else {
+            it.image(0, 15, id(g_moon), white);
+            id(g_moon).next_frame();
+            }
+          it.image(22, 39, id(i_weather_dust), white);
+          it.print(44, 39, id(font0), white, "частицы");
+
+          if (id(vent_bin).state) {
+          it.image(0, 39, id(g_fan));
+          id(g_fan).next_frame();
+          }
+
+          it.printf(0, 59, id(font0), white, "PM1 %4.0f μg/m³", id(pm1).state);
+
+          uint16_t vpm2 = (id(pm2).state);
+          switch (vpm2) {
+            case 0 ... 30: it.printf(0, 72, id(font0), green, "PM2.5 %4.0f μg/m³", id(pm2).state); break;
+            case 31 ... 60: it.printf(0, 72, id(font0), lgreen, "PM2.5 %4.0f μg/m³", id(pm2).state); break;
+            case 61 ... 90: it.printf(0, 72, id(font0), yellow, "PM2.5 %4.0f μg/m³", id(pm2).state); break;
+            case 91 ... 120: it.printf(0, 72, id(font0), lyellow, "PM2.5 %4.0f μg/m³", id(pm2).state); break;
+            case 121 ... 250: it.printf(0, 72, id(font0), red, "PM2.5 %4.0f μg/m³", id(pm2).state); break;
+            case 251 ... 1000: it.printf(0, 72, id(font0), tred, "PM2.5 %4.0f μg/m³", id(pm2).state); break;
+            default: it.printf(0, 72, id(font0), blue, "PM2.5 %4.0f μg/m³", id(pm2).state); break;
+          }
+          uint16_t vpm10 = (id(pm10).state);
+          switch (vpm10) {
+            case 0 ... 50: it.printf(0, 85, id(font0), green, "PM10  %4.0f μg/m³", id(pm10).state); break;
+            case 51 ... 100: it.printf(0, 85, id(font0), lgreen, "PM10  %4.0f μg/m³", id(pm10).state); break;
+            case 101 ... 250: it.printf(0, 85, id(font0), yellow, "PM10  %4.0f μg/m³", id(pm10).state); break;
+            case 251 ... 350: it.printf(0, 85, id(font0), lyellow, "PM10  %4.0f μg/m³", id(pm10).state); break;
+            case 351 ... 430: it.printf(0, 85, id(font0), red, "PM10  %4.0f μg/m³", id(pm10).state); break;
+            case 431 ... 1000: it.printf(0, 85, id(font0), tred, "PM10  %4.0f μg/m³", id(pm10).state); break;
+            default: it.printf(0, 85, id(font0), blue, "PM10  %4.0f μg/m³", id(pm10).state); break;
+          }
+          uint16_t vt = (id(bme680_t).state);
+          switch (vt) {
+            case 0 ... 22: 
+              it.image(0, 100, id(i_thermometer_low), blue);
+              it.printf(20, 97, id(font1), blue, "%2.1f°", id(bme680_t).state);
+              break;
+            case 23 ... 25: 
+              it.image(0, 100, id(i_thermometer), green);
+              it.printf(20, 97, id(font1), green, "%2.1f°", id(bme680_t).state);
+              break;
+            case 26 ... 28: 
+              it.image(0, 100, id(i_thermometer), yellow);
+              it.printf(20, 97, id(font1), yellow, "%2.1f°", id(bme680_t).state);
+              break;
+            case 29 ... 35: 
+              it.image(0, 100, id(i_thermometer_high), red);
+              it.printf(20, 97, id(font1), red, "%2.1f°", id(bme680_t).state);
+              break;
+            default: 
+              it.image(0, 100, id(i_thermometer_high), tred);
+              it.printf(20, 97, id(font1), tred, "%2.1f°", id(bme680_t).state);
+              break;
+          }
+          uint16_t vh = (id(bme680_h).state);
+          switch (vh) {
+            case 0 ... 30: 
+              it.image(64, 100, id(i_water_percent), red);
+              it.printf(82, 97, id(font1), red, "%3.f%%", id(bme680_h).state);
+              break;
+            case 31 ... 50: 
+              it.image(64, 100, id(i_water_percent), yellow);
+              it.printf(82, 97, id(font1), yellow, "%3.0f%%", id(bme680_h).state);
+              break;
+            case 51 ... 60: 
+              it.image(64, 100, id(i_water_percent), green);
+              it.printf(82, 97, id(font1), green, "%3.0f%%", id(bme680_h).state);
+              break;
+            case 61 ... 70: 
+              it.image(64, 100, id(i_water_percent), yellow);
+              it.printf(82, 97, id(font1), yellow, "%3.0f%%", id(bme680_h).state);
+              break;
+            case 71 ... 100: 
+              it.image(64, 100, id(i_water_percent), blue);
+              it.printf(82, 97, id(font1), blue, "%3.0f%%", id(bme680_h).state);
+              break;
+            default: 
+              it.image(64, 100, id(i_water_percent), tred);
+              it.printf(82, 97, id(font1), tred, "%3.0f%%", id(bme680_h).state);
+              break;
+          }
+          uint16_t viaq = (id(bme680_iaq).state);
+          switch (viaq) {
+            case 0 ... 50: 
+              it.image(64, 120, id(i_IAQ), green);
+              it.printf(85, 117, id(font1), green, "%3.0f", id(bme680_iaq).state);
+              break;
+            case 51 ... 100: 
+              it.image(64, 120, id(i_IAQ), green);
+              it.printf(85, 117, id(font1), green, "%3.0f", id(bme680_iaq).state);
+              break;
+            case 101 ... 150: 
+              it.image(64, 120, id(i_IAQ), lgreen);
+              it.printf(85, 117, id(font1), lgreen, "%3.0f", id(bme680_iaq).state);
+              break;
+            case 151 ... 200: 
+              it.image(64, 120, id(i_IAQ), yellow);
+              it.printf(85, 117, id(font1), yellow, "%3.0f", id(bme680_iaq).state);
+              break;
+            case 201 ... 250: 
+              it.image(64, 120, id(i_IAQ), lyellow);
+              it.printf(85, 117, id(font1), lyellow, "%3.0f", id(bme680_iaq).state);
+              break;
+            case 251 ... 300: 
+              it.image(64, 120, id(i_IAQ), red);
+              it.printf(85, 117, id(font1), red, "%3.0f", id(bme680_iaq).state);
+              break;
+            case 301 ... 350: 
+              it.image(64, 120, id(i_IAQ), tred);
+              it.printf(85, 117, id(font1), tred, "%3.0f", id(bme680_iaq).state);
+              break;
+            case 351 ... 500: 
+              it.image(64, 120, id(i_IAQ), tred);
+              it.printf(85, 117, id(font1), tred, "%3.0f", id(bme680_iaq).state);
+              break;
+            default: 
+              it.image(64, 120, id(i_IAQ), blue);
+              it.printf(85, 117, id(font1), blue, "%3.0f", id(bme680_iaq).state);
+              break;
+          }
+          uint16_t vp = (id(bme680_p).state);
+          switch (vp) {
+            case 710 ... 730: 
+              it.image(0, 117, id(i_weather_pouring), blue);
+              it.printf(21, 120, id(font1), red, "%3.0f", id(bme680_p).state);
+              break;
+            case 731 ... 740: 
+              it.image(0, 120, id(i_weather_pouring), blue);
+              it.printf(21, 117, id(font1), yellow, "%3.0f", id(bme680_p).state);
+              break;
+            case 741 ... 760: 
+              it.image(0, 120, id(i_cloud_outline), white);
+              it.printf(21, 117, id(font1), green, "%3.0f", id(bme680_p).state);
+              break;
+            case 761 ... 770: 
+              it.image(0, 120, id(i_white_balance_sunny), yellow);
+              it.printf(21, 117, id(font1), yellow, "%3.0f", id(bme680_p).state);
+              break;
+            case 771 ... 780: 
+              it.image(0, 120, id(i_white_balance_sunny), yellow);
+              it.printf(21, 117, id(font1), red, "%3.0f", id(bme680_p).state);
+              break;
+            default: 
+              it.image(0, 120, id(i_white_balance_sunny), tred);
+              it.printf(21, 117, id(font1), tred, "%3.0f", id(bme680_p).state);
+              break;
+          }
+          uint16_t vco2 = (id(bme680_co2).state);
+          switch (vco2) {
+            case 0 ... 600: 
+              it.image(0, 140, id(i_molecule_co2), green);
+              it.printf(21, 137, id(font1), green, "%3.0f", id(bme680_co2).state);
+              break;
+            case 601 ... 1000: 
+              it.image(0, 140, id(i_molecule_co2), lgreen);
+              it.printf(21, 137, id(font1), lgreen, "%3.0f", id(bme680_co2).state);
+              break;
+            case 1001 ... 1500: 
+              it.image(0, 140, id(i_molecule_co2), yellow);
+              it.printf(21, 137, id(font1), yellow, "%3.0f", id(bme680_co2).state);
+              break;
+            case 1501 ... 2000: 
+              it.image(0, 140, id(i_molecule_co2), lyellow);
+              it.printf(21, 137, id(font1), lyellow, "%3.0f", id(bme680_co2).state);
+              break;
+            case 2001 ... 4000: 
+              it.image(0, 140, id(i_molecule_co2), red);
+              it.printf(21, 137, id(font1), red, "%3.0f", id(bme680_co2).state);
+              break;
+            default: 
+              it.image(0, 140, id(i_molecule_co2), tred);
+              it.printf(21, 137, id(font1), tred, "%.0f", id(bme680_co2).state);
+              break;
+          }
+          uint16_t vvoc = (id(bme680_voc).state);
+          switch (vvoc) {
+            case 0 ... 60: 
+              it.image(64, 140, id(i_molecule), green);    
+              it.printf(85, 137, id(font1), green, "%.0f", id(bme680_voc).state);
+            case 61 ... 200: 
+              it.image(64, 140, id(i_molecule), lgreen);    
+              it.printf(85, 137, id(font1), lgreen, "%.0f", id(bme680_voc).state);
+              break;
+            case 201 ... 600: 
+              it.image(64, 140, id(i_molecule), yellow);    
+              it.printf(85, 137, id(font1), yellow, "%.0f", id(bme680_voc).state);
+              break;
+            case 601 ... 2000: 
+              it.image(64, 140, id(i_molecule), lyellow);    
+              it.printf(85, 137, id(font1), lyellow, "%.0f", id(bme680_voc).state);
+              break;
+            case 2001 ... 6000: 
+              it.image(64, 140, id(i_molecule), red);    
+              it.printf(85, 137, id(font1), red, "%.0f", id(bme680_voc).state);
+              break;
+            default: 
+              it.image(64, 140, id(i_molecule), tred);    
+              it.printf(85, 137, id(font1), tred, "%.0f", id(bme680_voc).state);
+              break;
+          }
+
+web_server:
+  port: 80
+  auth:
+    username: !secret web_user
+    password: !secret web_pass         
+
+time:
+  - platform: sntp
+    id: sntp_time
+    servers:
+     - 0.pool.ntp.org
+    on_time: 
+# Время включения вентилятора      
+      - seconds: 0
+        then:
+          - fan.turn_on:
+              id: pmvent
+# изменение скорости врашения              
+           #   brightness: !lambda |-
+           #     return id(brightness).state / 10.0;   
+  # - output.set_level:
+   #     id: dac_output
+   #     level: 50%
+
+# Время запроса данных pm1006k                       
+#      - seconds: 30
+#        then:
+#          - uart.write:
+#              id: PM1006
+#              data: [0x11, 0x02, 0x0B, 0x01, 0xE1]
+# Время выключения вентилятора                  
+      - seconds: 32
+        then:
+          - fan.turn_off:
+              id: pmvent
