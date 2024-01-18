@@ -3,7 +3,7 @@
 |------------------------------------------------------|-----------------------------------------------------|
 | ![1](https://github.com/ananyevgv/esphome-vindriktning-ikea/blob/main/1704567361805.jpg) | ![2](https://github.com/ananyevgv/esphome-vindriktning-ikea/blob/main/1704567697413.jpg) |
 
-Мой вариант vindriktning-ikea основан на https://modkam.ru/2023/10/30/ikea-vindriktning/
+Мой вариант vindriktning-ikea основан на https://modkam.ru/2023/10/30/ikea-vindriktning/ + External components PM1006k
 с небольшими  доработками, убран родной контроллер, добавлен датчик bme680, добавлено управление вентилятором и яркостью дисплея, измение цвета показаний в зависимости от значений, индикация солнца над горизонтом, индикация ожидаемой погоды в зависимости от давления.
 Все размещено на одной странице дисплея.
 
@@ -11,7 +11,7 @@
 <img src="https://github.com/ananyevgv/esphome-vindriktning-ikea/blob/main/v2.jpg" height="300" alt="v2">
 <img src="https://github.com/ananyevgv/esphome-vindriktning-ikea/blob/main/ikea.jpg" height="300" alt="board">
 
-# с родным контроллером
+# External components PM1006k с родным контроллером
 ```yaml
 
 uart:
