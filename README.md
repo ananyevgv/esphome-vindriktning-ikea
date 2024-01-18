@@ -4,14 +4,14 @@
 | ![1](https://github.com/ananyevgv/esphome-vindriktning-ikea/blob/main/1704567361805.jpg) | ![2](https://github.com/ananyevgv/esphome-vindriktning-ikea/blob/main/1704567697413.jpg) |
 
 Мой вариант vindriktning-ikea основан на https://modkam.ru/2023/10/30/ikea-vindriktning/ 
-с небольшими  доработками, убран родной контроллер, добавлен датчик bme680, добавлено управление вентилятором и яркостью дисплея, измение цвета показаний в зависимости от значений, индикация солнца над горизонтом, индикация ожидаемой погоды в зависимости от давления + External components esphome PM1006k.
+с небольшими  доработками, убран родной контроллер, добавлен датчик bme680, добавлено управление вентилятором и яркостью дисплея, измение цвета показаний в зависимости от значений, индикация солнца над горизонтом, индикация ожидаемой погоды в зависимости от давления + ESPHome component PM1006k.
 Все размещено на одной странице дисплея.
 
 # display_v2.yaml
 <img src="https://github.com/ananyevgv/esphome-vindriktning-ikea/blob/main/v2.jpg" height="300" alt="v2">
 <img src="https://github.com/ananyevgv/esphome-vindriktning-ikea/blob/main/ikea.jpg" height="300" alt="board">
 
-# External components esphome PM1006k с родным контроллером
+# ESPHome component PM1006k с родным контроллером
 ```yaml
 
 uart:
@@ -36,7 +36,7 @@ external_components:
         id: "pm10"
 
 ```
-# External components esphome PM1006k без родного контроллера
+# ESPHome component PM1006k без родного контроллера
 
 
 Если вы запускаете PM1006 (2,5 мкм) или PM1006K (1, 2,5, 10 мкм) без родного микроконтроллера, вам необходимо отправить последовательную команду в течение первых 5 секунд после подачи питания на датчик. В противном случае датчик переключится в режим PWM и не будет отвечать на запросы UART. 
