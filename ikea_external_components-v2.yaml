@@ -401,7 +401,7 @@ fan:
     output: vent
     name: "vent"
     id: pmvent
- #   speed_count: 70 # Скорость вентилятора по умолчанию
+    speed_count: 10 # количество скоростей вентилятора 
     on_turn_on:
       lambda: |-
         id(vent_bin).publish_state(true);
@@ -684,6 +684,7 @@ time:
         then:
           - fan.turn_on:
               id: pmvent
+              speed: 7 # скорость вентилятора 70%
 # Время выключения вентилятора                  
       - seconds: 32
         then:
