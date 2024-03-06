@@ -65,12 +65,6 @@ optional<bool> PM1006kComponent::check_byte_() const {
     return byte == PM1006k_RESPONSE_HEADER[index];
   }
 
-  // just some additional notes here:
-  // index 3..4 is unused
-  // index 5..6 is our PM2.5 reading (3..6 is called DF1-DF4 in the datasheet at
-  // http://www.jdscompany.co.kr/download.asp?gubun=07&filename=PM1006_LED_PARTICLE_SENSOR_MODULE_SPECIFICATIONS.pdf
-  // that datasheet goes on up to DF16, which is unused for PM1006 but used in PM1006K
-  // so this code should be trivially extensible to support that one later
   if (index < (sizeof(PM1006k_RESPONSE_HEADER) + 16))
     return true;
 
@@ -91,7 +85,7 @@ void PM1006kComponent::parse_data_() {
   const int pm_1_0_concentration = this->get_16_bit_uint_(9);
   const int pm_2_5_concentration = this->get_16_bit_uint_(5);
   const int pm_10_0_concentration = this->get_16_bit_uint_(13);
-  ESP_LOGD(TAG, "Got PM1 Concentration: %d µg/m³", pm_1_0_concentration);
+  ESP_LOGD(TAG, "Got PM1.0 Concentration: %d µg/m³", pm_1_0_concentration);
   ESP_LOGD(TAG, "Got PM2.5 Concentration: %d µg/m³", pm_2_5_concentration);
   ESP_LOGD(TAG, "Got PM10 Concentration: %d µg/m³", pm_10_0_concentration);
   
