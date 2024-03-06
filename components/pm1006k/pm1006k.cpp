@@ -15,7 +15,7 @@ void PM1006kComponent::setup() {
 
 void PM1006kComponent::dump_config() {
   ESP_LOGCONFIG(TAG, "PM1006k:");
-  LOG_SENSOR("  ", "PM1", this->pm_1_0_sensor_);
+  LOG_SENSOR("  ", "PM1.0", this->pm_1_0_sensor_);
   LOG_SENSOR("  ", "PM2.5", this->pm_2_5_sensor_);
   LOG_SENSOR("  ", "PM10", this->pm_10_0_sensor_);
   LOG_UPDATE_INTERVAL(this);
