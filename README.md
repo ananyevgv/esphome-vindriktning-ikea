@@ -8,14 +8,14 @@
 Все размещено на одной странице дисплея.
 
 Распайка дисплея st7735 
-
-Дисплей   ESP32    Шилд
-SDA       GPIO23    D7       
-SCLK      GPIO18    D5       
-D/C       GPIO5     D8     
-RST       GPIO1     RST    
-CS        GPIO26    D0    
-LED       GPIO19    D6       
+|-----------------|-----------------|-----------------|
+|Дисплей   |ESP32    |Шилд
+|SDA       |GPIO23   |D7            
+|SCLK      |GPIO18   |D5       
+|D/C       |GPIO5    |D8     
+|RST       |GPIO1    |RST    
+|CS        |GPIO26   |D0    
+|LED       |GPIO19   |D6       
 
 
 Распаяка ножек контроллера
