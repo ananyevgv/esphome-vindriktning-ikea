@@ -20,14 +20,14 @@
 
 Распаяка ножек контроллера
 
-питание (+) 4 ножка (-) 2 ножка контроллера
+|Контроллер       |   ESP           |
+|-----------------|-----------------|
+|1|tx|
+|2|-|
+|4|+|
+|5|fan|
+|8|rx|
 
-tx_pin: 3 #1 ножка контроллера
-
-rx_pin: 1 #8 ножка контроллера
-
-FAN 5 ножка контроллера
-  
 # display_v2.yaml
 <img src="https://github.com/ananyevgv/esphome-vindriktning-ikea/blob/main/v2.jpg" height="300" alt="v2">
 <img src="https://github.com/ananyevgv/esphome-vindriktning-ikea/blob/main/ikea.jpg" height="300" alt="board">
