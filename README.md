@@ -19,7 +19,7 @@
 
 
 # Распайка ножек контроллера
-|Контроллер       |   ESP           |
+|Контроллер       |    ESP          |
 |-----------------|-----------------|
 |1|tx|
 |2|GND|
@@ -27,7 +27,15 @@
 |5|fan|
 |8|rx|
 
-# display_v2.yaml
+# Распайка bme680
+|bme680           |    Шилд         |
+|-----------------|-----------------|
+|GND|GND|
+|vcc|3v3|
+|scl|scl|
+|sda|sda|
+
+# display_v2.yaml 
 <img src="https://github.com/ananyevgv/esphome-vindriktning-ikea/blob/main/v2.jpg" height="300" alt="v2">
 <img src="https://github.com/ananyevgv/esphome-vindriktning-ikea/blob/main/ikea.jpg" height="300" alt="board">
 
