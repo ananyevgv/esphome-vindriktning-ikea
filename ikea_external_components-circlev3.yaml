@@ -1,0 +1,564 @@
+# Вариант без родного контроллера питание (+) 4 ножка (-) 2 ножка контроллера
+########### st7735 ################
+## SDA  GPIO23 D7   VSPI MOSI    ##
+## SCLK GPIO18 D5   VSPI SCK     ##
+## D/C  GPIO5  D8   DC           ##
+## RST  GPIO1  RST  RESET        ##
+## CS   GPIO26 D0   chip select  ##
+## LED  GPIO19 D6                ##
+###################################
+
+#################### WEMOS D1 ESP32 ###############################
+##  |GN|       |RS| reset    |#|     | 1| tuart    |GN|          ##
+##  |NC|       |36|          |#|     | 3| ruart    |27|          ##
+##  |39|       |26| cs       |#|     |22| scl      |25|          ##
+##  |35|       |18| clk      |#|     |21| sda      |32|          ##
+##  |33|       |19| led      |#|     |17| TTP223   |12|          ##
+##  |34|       |23| mosi     |#|     |16| vent     | 4|          ##
+##  |14|       | 5| dc       |#|     |GN|          | 0|          ## 
+##  |NC|       |3V|          |#|     |5V|          | 2|          ##
+##  | 9|       |13|          |#|     |15|          | 8|          ##
+##  |11|       |10|          |#|     | 7|          | 6|          ##
+###################################################################
+
+substitutions:
+  name: ikea
+  device_description: "ikea"
+  telegram_api_token: !secret telegram_bot
+  telegram_chat_id: !secret chat_id_gora_r
+  
+esphome:
+  name: "${name}"
+  comment: "${device_description}"
+  on_boot:
+    priority: 240
+    then:
+      - uart.write:
+          id: PM1006
+          data: [0x11, 0x02, 0x0B, 0x01, 0xE1]
+      - light.turn_on: lcd
+
+esp32:
+  board: wemos_d1_mini32
+
+# Enable logging
+logger:
+# Enable Home Assistant API 
+api:
+  password: !secret api_pass
+  reboot_timeout: 0s
+#Включаем загрузку по воздуху
+ota:
+  password: !secret ota_pass
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+external_components:
+  #    type: local
+  #    path: my_components
+ #   components: [ pm1006k ]
+  source: github://ananyevgv/esphome-components
+  components: [pm1006k]
+  refresh: 0s
+
+color:
+  - id: red
+    hex: ff4c5b
+
+  - id: tred
+    hex: ff0000
+
+  - id: yellow
+    red: 100%
+    green: 100%
+    blue: 0%
+
+  - id: lyellow
+    hex: ffa500
+
+  - id: green
+    red: 0%
+    green: 100%
+    blue: 0%
+
+  - id: lgreen
+    red: 70%
+    green: 100%
+    blue: 0% 
+
+  - id: blue
+    red: 0%
+    green: 100%
+    blue: 100%
+
+  - id: white
+    red: 100%
+    green: 100%
+    blue: 100%
+
+  - id: black
+    red: 0%
+    green: 0%
+    blue: 0%  
+
+font:
+
+  - file: "font/DSEG7ModernMini-Bold.ttf"
+    id: SEG24
+    size: 24
+  - file: "font/DSEG7ModernMini-Bold.ttf"
+    id: SEG12
+    size: 12
+  - file:
+      type: gfonts
+      family: Roboto
+    id: font11
+    size: 11
+    glyphs: |-
+      !"%()+=,-_.:³°₂μ0123456789АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧЩЬЫЪЭЮЯABCDEFGHIJKLMNOPQRSTUVWXYZ абвгдеёжзийклмнопрстуфхцчщьыъэюяabcdefghijklmnopqrstuvwxyz'éèàòùç/&ôœìïöñ
+  - file:
+      type: gfonts
+      family: Roboto
+    id: font0
+    size: 15
+    glyphs: |-
+      !"%()+=,-_.:³°₂μ0123456789АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧЩЬЫЪЭЮЯABCDEFGHIJKLMNOPQRSTUVWXYZ абвгдеёжзийклмнопрстуфхцчщьыъэюяabcdefghijklmnopqrstuvwxyz'éèàòùç/&ôœìïöñ
+    # gfonts://family[@weight]
+  - file:
+      type: gfonts
+      family: Roboto
+    id: font1
+    size: 20
+  - file:
+      type: gfonts
+      family: Roboto
+      weight: 700
+    id: font2
+    size: 35  
+  - file: 'gfonts://Material+Symbols+Outlined'
+    id: icon_font
+    size: 20
+    glyphs: ["\U0000e846","\U0000e7b0","\U0000f176","\U0000ebdb","\U0000e430","\U0000e2bd","\U0000f87e"] 
+#             термометр     СО           дождь       гроза        солнце                    влажность
+
+i2c:
+   sda: D2 #GPIO21
+   scl: D1 #GPIO22
+   scan: true
+
+bme680_bsec:
+  address: 0x77
+
+uart:
+  tx_pin: 3 #1 ножка контроллера
+  rx_pin: 1 #8 ножка контроллера
+  baud_rate: 9600
+  id: PM1006
+ 
+spi:
+  clk_pin: D5 #GPIO18
+  mosi_pin: D7 #GPIO23
+
+binary_sensor:
+  - platform: template
+    name: "vent"
+    id: vent_bin
+    internal: true
+
+  - platform: gpio
+    pin: 17
+    name: "LCD backlight"
+    device_class: light
+    on_press:
+      then:
+        - light.turn_on: lcd
+        - delay: 30s # время работы экрана
+        - light.turn_off: lcd        
+
+text_sensor:
+  - platform: wifi_info
+    ip_address:
+      name: "${name} IP Address"
+      icon: mdi:ip
+      id: ip
+    ssid:
+      name: "${name} SSID"
+      icon: mdi:access-point-network
+    mac_address:
+      name: "${name} Mac"
+      icon: mdi:lan
+  - platform: bme680_bsec
+    iaq_accuracy:
+      name: "${name} IAQ Accuracy"
+  - platform: template
+    name: "${name} IAQ Classification"
+    icon: "mdi:checkbox-marked-circle-outline"
+    lambda: |-
+      uint16_t var = (id(bme680_iaq).state);
+      switch (var) {
+        case 0 ... 50: return std::string("Отлично");
+        case 51 ... 100: return std::string("Хорошо");
+        case 101 ... 150: return std::string("Слегка загрязненный");
+        case 151 ... 200: return std::string("Умеренно загрязненный");
+        case 201 ... 250: return std::string("Слегка загрязненный");
+        case 251 ... 300: return std::string("Загрязненный");
+        case 301 ... 350: return std::string("Сильно загрязненный");
+        case 351 ... 500: return std::string("Черезвычайно загрязненный"); 
+        default: return std::string("error");
+      }      
+sensor:
+  - platform: internal_temperature
+    name: "${name} ESP32 T"
+  - platform: esp32_hall
+    name: "${name} hall Sensor"
+    update_interval: 60s
+
+  - platform: wifi_signal
+    name: "${name} Wifi"
+    update_interval: 60s  
+    id: wifi_signal_db
+    entity_category: "diagnostic"
+  - platform: copy # Reports the WiFi signal strength in %
+    source_id: wifi_signal_db
+    name: "${name} WiFi Percent"
+    filters:
+      - lambda: return min(max(2 * (x + 100.0), 0.0), 100.0);
+    unit_of_measurement: "%"
+    entity_category: "diagnostic"
+    id: WiFiP
+
+  - platform: bme680_bsec
+    temperature:
+      name: "${name} T"
+      id: bme680_t
+  #    filters:
+  #    - calibrate_linear:
+   #     - 0.0 -> 0.0
+   #     - 26.7 -> 24.7
+    pressure:
+      name: "${name} P"
+      id: bme680_p
+      filters:  
+        - lambda: return x * 0.75;
+      unit_of_measurement: "mmHg"
+    humidity:
+      name: "${name} H"
+      id: bme680_h
+   #   filters:
+  #    - calibrate_linear:
+  #      - 0.0 -> 0.0
+   #     - 52 -> 54.7
+    iaq:
+      name: "${name} IAQ"
+      id: bme680_iaq
+    iaq_accuracy:
+     name: "${name}  IAQ Accuracy"
+    co2_equivalent:
+      name: "${name} CO₂"
+      id: bme680_co2
+    breath_voc_equivalent:
+      name: "${name} VOC"
+      id: bme680_voc
+    gas_resistance:
+      #Gas resistance in Ω
+      name: "${name}  Gas Resistance"
+      filters:
+        - median
+
+  - platform: bh1750
+    name: "${name} Illuminance"
+    id: i_clock
+    address: 0x23
+    update_interval: 10s
+
+  - platform: absolute_humidity
+    name: "${name} Absolute Humidity"
+    temperature: bme680_t
+    humidity: bme680_h
+
+  - platform: pm1006k
+    pm_1_0:   
+      name: "PM 1.0"
+      id: "pm1"
+    pm_2_5:
+      name: "PM 2.5"
+      id: "pm2"
+    pm_10_0:
+      name: "PM 10"
+      id: "pm10"
+      unit_of_measurement: µg/m³
+    update_interval: 30s
+
+  - platform: template
+    name: "${name} brightness"
+    id: brightness
+    update_interval: 20s
+    internal: true
+    lambda: |-
+      uint16_t brig = (id(i_clock).state) *10;
+      switch (brig) {
+        case 0 ... 1: return 7; break;
+        case 2 ... 4: return 8; break;
+        case 5 ...7: return 9; break;
+        case 8 ... 10: return 10; break;
+        default: return 10; break;
+      }
+    on_value:
+      then:
+        - light.turn_on:
+            id: lcd
+            brightness: !lambda |-
+              return id(brightness).state / 10.0; 
+fan:
+  - platform: speed
+    output: vent
+    name: "vent"
+    id: pmvent
+    speed_count: 10 # Количество скоростеей вентилятора
+    on_turn_on:
+      lambda: |-
+        id(vent_bin).publish_state(true);
+    on_turn_off:
+      lambda: |-
+        id(vent_bin).publish_state(false); 
+light:
+ # - platform: monochromatic
+  #  name: "vent"
+ #   output: vent
+   # id: pmvent
+   # icon: "mdi:fan"
+ #   internal: true
+
+  - platform: monochromatic
+    name: "light_LCD"
+    id: lcd
+    output: light_LCD
+ #   internal: true
+# Example output entry
+output:
+  - platform: esp32_dac
+    id: vent
+    pin: GPIO25 # D4 #GPIO16 #5 ножка контроллера
+  - platform: ledc
+    pin: D6 #GPIO19
+    id: light_LCD  
+    inverted: false
+      
+display:
+  - platform: st7735
+    model: "INITR_18BLACKTAB"
+    reset_pin: GPIO0
+    cs_pin: D0 #GPIO26
+    dc_pin: D8 #GPIO5
+    rotation: 0
+    device_width: 128
+    device_height: 160
+    col_start: 0
+    row_start: 0
+    eight_bit_color: true
+    update_interval: 1s
+    id: my_display
+    pages:
+      - id: page1
+        lambda: |- 
+          it.line(0,35,30,35, white);
+          it.line(98,35,128,35, white);
+          it.line(64,0,64,25, white);
+          it.print(0, 22, id(font11), white, "TEMP");
+          it.print(92, 22, id(font11), white, "HYDRO");
+
+          for (int grad = 130; grad <= 175; grad++) {
+            it.draw_pixel_at(64+60*cos(grad* PI / 180), 85+60*sin(grad* PI / 180), white);
+          }
+          for (int grad = 185; grad <= 260; grad++) {
+            it.draw_pixel_at(64+60*cos(grad* PI / 180), 85+60*sin(grad* PI / 180), white);
+          }
+          for (int grad = 280; grad <= 355; grad++) {
+            it.draw_pixel_at(64+60*cos(grad* PI / 180), 85+60*sin(grad* PI / 180), white);
+          }
+          for (int grad = 365; grad <= 410; grad++) {
+            it.draw_pixel_at(64+60*cos(grad* PI / 180), 85+60*sin(grad* PI / 180), white);
+          }
+          for (int grad = 135; grad <= 405; grad++) {
+            it.draw_pixel_at(64+40*cos(grad* PI / 180), 85+40*sin(grad* PI / 180), white);
+          }
+          for (int grad = 60; grad <= 120; grad++) {
+            it.draw_pixel_at(64+40*cos(grad* PI / 180), 85+40*sin(grad* PI / 180), white);
+          }
+
+
+
+          for (int grad = 135; grad <= 145; grad++) {
+            for (int sh = 45; sh<=48; sh++) {
+              it.draw_pixel_at(64+sh*cos(grad* PI / 180), 85+sh*sin(grad* PI / 180), green);
+            }
+          }  
+          for (int grad = 146; grad <= 155; grad++) {
+            for (int sh = 45; sh<=48; sh++) {
+              it.draw_pixel_at(64+sh*cos(grad* PI / 180), 85+sh*sin(grad* PI / 180), lgreen);
+            }
+          }  
+          for (int grad = 156; grad <= 165; grad++) {
+            for (int sh = 45; sh<=48; sh++) {
+              it.draw_pixel_at(64+sh*cos(grad* PI / 180), 85+sh*sin(grad* PI / 180), yellow);
+            }
+          } 
+          for (int grad = 166; grad <= 175; grad++) {
+            for (int sh = 45; sh<=48; sh++) {
+              it.draw_pixel_at(64+sh*cos(grad* PI / 180), 85+sh*sin(grad* PI / 180), lyellow);
+            }
+          } 
+          for (int grad = 176; grad <= 220; grad++) {
+            for (int sh = 45; sh<=48; sh++) {
+              it.draw_pixel_at(64+sh*cos(grad* PI / 180), 85+sh*sin(grad* PI / 180), red);
+            }
+          } 
+          for (int grad = 221; grad <= 410; grad++) {
+            for (int sh = 45; sh<=48; sh++) {
+              it.draw_pixel_at(64+sh*cos(grad* PI / 180), 85+sh*sin(grad* PI / 180), tred);
+            }
+          } 
+
+
+
+          it.line(0,130,22,130, white);          
+          it.line(102,130,128,130, white); 
+
+          it.strftime(25, 136, id(SEG24), lyellow,"%H %M", id(sntp_time).now());
+          static int i = 0;
+          i++;
+          if ((i % 2) == 0) 
+            it.print(65, 136, id(SEG24),lyellow,":");
+          it.print(0, 131, id(font11), lyellow, "TIME");
+
+          it.printf(70,0, id(SEG24), blue, "%2.0f", id(bme680_h).state);
+          it.print(110, 0, id(icon_font), blue, "\U0000f87e");
+
+          uint16_t vt = (id(bme680_t).state);
+          float td;
+          float tc = modf( vt, &td);
+          it.printf(0, 0, id(SEG24), green, "%2.0f.", td);
+          it.printf(40, 12, id(SEG12), green, "%1.0f", tc*10);
+          it.print(38, 0, id(font11), green, "°С");
+
+
+
+          uint16_t vpm2 = (id(pm2).state);
+          switch (vpm2) {
+            case 0 ... 30:
+              if (id(pm2).state); {
+                for (int grad = 270; grad <= id(pm2).state + 270; grad++) {
+                  for (int sh = 53; sh<=60; sh++) {
+                    it.draw_pixel_at(64+sh*cos(grad* PI / 360), 85+sh*sin(grad* PI / 360), green);
+                  }
+                }  
+              }
+              break;
+            case 31 ... 60:
+              if (id(pm2).state); {
+                for (int grad = 270; grad <= id(pm2).state + 270; grad++) {
+                  for (int sh = 53; sh<=60; sh++) {
+                    it.draw_pixel_at(64+sh*cos(grad* PI / 360), 85+sh*sin(grad* PI / 360), lgreen);
+                  }
+                }  
+              }
+              break;
+            case 61 ... 90: 
+              if (id(pm2).state); {
+                for (int grad = 270; grad <= id(pm2).state + 270; grad++) {
+                  for (int sh = 53; sh<=60; sh++) {
+                    it.draw_pixel_at(64+sh*cos(grad* PI / 360), 85+sh*sin(grad* PI / 360), yellow);
+                  }
+                }  
+              }
+              break;
+            case 91 ... 120: 
+              if (id(pm2).state); {
+                for (int grad = 270; grad <= id(pm2).state + 270; grad++) {
+                  for (int sh = 53; sh<=60; sh++) {
+                    it.draw_pixel_at(64+sh*cos(grad* PI / 360), 85+sh*sin(grad* PI / 360), lyellow);
+                  }
+                }  
+              }
+              break;
+            case 121 ... 250: 
+              if (id(pm2).state); {
+                for (int grad = 270; grad <= id(pm2).state + 270; grad++) {
+                  for (int sh = 53; sh<=60; sh++) {
+                    it.draw_pixel_at(64+sh*cos(grad* PI / 360), 85+sh*sin(grad* PI / 360), red);
+                  }
+                }  
+              }
+              break;
+            case 251 ... 1000:
+              if (id(pm2).state); {
+                for (int grad = 270; grad <= id(pm2).state + 270; grad++) {
+                  for (int sh = 53; sh<=60; sh++) {
+                    it.draw_pixel_at(64+sh*cos(grad* PI / 360), 85+sh*sin(grad* PI / 360), tred);
+                  }
+                }  
+              }
+              break;
+            default: 
+              if (id(pm2).state); {
+                for (int grad = 270; grad <= id(pm2).state + 270; grad++) {
+                  for (int sh = 53; sh<=60; sh++) {
+                    it.draw_pixel_at(64+sh*cos(grad* PI / 360), 85+sh*sin(grad* PI / 360), blue);
+                  }
+                }  
+              }
+              break;              
+          }
+
+
+          it.printf(64, 80, id(SEG24), white, TextAlign::CENTER, "%.0f", id(pm2).state);
+          it.print(64, 105, id(font11), white, TextAlign::CENTER, "ppm");
+          it.print(64, 130, id(font11), white, TextAlign::CENTER, "PM2.5");
+
+
+interval:
+  - interval: 5s
+    then:
+      - display.page.show_next: my_display
+      - component.update: my_display 
+
+web_server:
+  port: 80
+  auth:
+    username: !secret web_user
+    password: !secret web_pass         
+
+time:
+  - platform: sntp
+    id: sntp_time
+    servers:
+     - 0.pool.ntp.org
+    on_time: 
+# Время включения вентилятора      
+      - seconds: 0
+        then:
+          - fan.turn_on:
+              id: pmvent
+              speed: 7 # скорость вентилятора 70%
+# изменение скорости врашения              
+           #   brightness: !lambda |-
+           #     return id(brightness).state / 10.0;   
+  # - output.set_level:
+   #     id: dac_output
+   #     level: 50%
+
+# Время запроса данных pm1006k                       
+#      - seconds: 30
+#        then:
+#          - uart.write:
+#              id: PM1006
+#              data: [0x11, 0x02, 0x0B, 0x01, 0xE1]
+# Время выключения вентилятора                  
+      - seconds: 32
+        then:
+          - fan.turn_off:
+              id: pmvent
+
+
