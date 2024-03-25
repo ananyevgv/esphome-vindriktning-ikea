@@ -68,7 +68,7 @@ color:
     hex: ff4c5b
 
   - id: tred
-    hex: ff0000
+    hex: 85090b
 
   - id: yellow
     red: 100%
@@ -609,32 +609,32 @@ display:
 
 
 
-          for (int grad = 135; grad <= 145; grad++) {
+          for (int grad = 135; grad <= 148; grad++) {
             for (int sh = 45; sh<=48; sh++) {
               it.draw_pixel_at(64+sh*cos(grad* PI / 180), 85+sh*sin(grad* PI / 180), green);
             }
           }  
-          for (int grad = 146; grad <= 155; grad++) {
+          for (int grad = 149; grad <= 169; grad++) {
             for (int sh = 45; sh<=48; sh++) {
               it.draw_pixel_at(64+sh*cos(grad* PI / 180), 85+sh*sin(grad* PI / 180), lgreen);
             }
           }  
-          for (int grad = 156; grad <= 165; grad++) {
+          for (int grad = 170; grad <= 218; grad++) {
             for (int sh = 45; sh<=48; sh++) {
               it.draw_pixel_at(64+sh*cos(grad* PI / 180), 85+sh*sin(grad* PI / 180), yellow);
             }
           } 
-          for (int grad = 166; grad <= 175; grad++) {
+          for (int grad = 219; grad <= 252; grad++) {
             for (int sh = 45; sh<=48; sh++) {
               it.draw_pixel_at(64+sh*cos(grad* PI / 180), 85+sh*sin(grad* PI / 180), lyellow);
             }
           } 
-          for (int grad = 176; grad <= 220; grad++) {
+          for (int grad = 253; grad <= 278; grad++) {
             for (int sh = 45; sh<=48; sh++) {
               it.draw_pixel_at(64+sh*cos(grad* PI / 180), 85+sh*sin(grad* PI / 180), red);
             }
           } 
-          for (int grad = 221; grad <= 410; grad++) {
+          for (int grad = 279; grad <= 410; grad++) {
             for (int sh = 45; sh<=48; sh++) {
               it.draw_pixel_at(64+sh*cos(grad* PI / 180), 85+sh*sin(grad* PI / 180), tred);
             }
@@ -658,7 +658,7 @@ display:
 
           uint16_t vpm10 = (id(pm10).state);
           switch (vpm10) {
-            case 0 ... 30:
+            case 0 ... 50:
               if (id(pm10).state); {
                 for (int grad = 270; grad <= id(pm10).state + 270; grad++) {
                   for (int sh = 53; sh<=60; sh++) {
@@ -667,7 +667,7 @@ display:
                 }  
               }
               break;
-            case 31 ... 60:
+            case 51 ... 100:
               if (id(pm10).state); {
                 for (int grad = 270; grad <= id(pm10).state + 270; grad++) {
                   for (int sh = 53; sh<=60; sh++) {
@@ -676,7 +676,7 @@ display:
                 }  
               }
               break;
-            case 61 ... 90: 
+            case 101 ... 250: 
               if (id(pm10).state); {
                 for (int grad = 270; grad <= id(pm10).state + 270; grad++) {
                   for (int sh = 53; sh<=60; sh++) {
@@ -685,7 +685,7 @@ display:
                 }  
               }
               break;
-            case 91 ... 120: 
+            case 251 ... 350: 
               if (id(pm10).state); {
                 for (int grad = 270; grad <= id(pm10).state + 270; grad++) {
                   for (int sh = 53; sh<=60; sh++) {
@@ -694,7 +694,7 @@ display:
                 }  
               }
               break;
-            case 121 ... 250: 
+            case 351 ... 430: 
               if (id(pm10).state); {
                 for (int grad = 270; grad <= id(pm10).state + 270; grad++) {
                   for (int sh = 53; sh<=60; sh++) {
@@ -703,7 +703,7 @@ display:
                 }  
               }
               break;
-            case 251 ... 1000:
+            case 431 ... 1000:
               if (id(pm10).state); {
                 for (int grad = 270; grad <= id(pm10).state + 270; grad++) {
                   for (int sh = 53; sh<=60; sh++) {
@@ -770,3 +770,5 @@ time:
         then:
           - fan.turn_off:
               id: pmvent
+
+
