@@ -366,6 +366,70 @@ display:
           it.line(0,35,30,35, white);
           it.line(98,35,128,35, white);
           it.line(64,0,64,25, white);
+          it.print(0, 22, id(font11), white, "IAQ");
+          it.print(92, 22, id(font11), white, "PRESS");
+
+          for (int grad = 130; grad <= 175; grad++) {
+            it.draw_pixel_at(64+60*cos(grad* PI / 180), 85+60*sin(grad* PI / 180), white);
+          }
+          for (int grad = 185; grad <= 260; grad++) {
+            it.draw_pixel_at(64+60*cos(grad* PI / 180), 85+60*sin(grad* PI / 180), white);
+          }
+          for (int grad = 280; grad <= 355; grad++) {
+            it.draw_pixel_at(64+60*cos(grad* PI / 180), 85+60*sin(grad* PI / 180), white);
+          }
+          for (int grad = 365; grad <= 410; grad++) {
+            it.draw_pixel_at(64+60*cos(grad* PI / 180), 85+60*sin(grad* PI / 180), white);
+          }
+          for (int grad = 135; grad <= 405; grad++) {
+            it.draw_pixel_at(64+40*cos(grad* PI / 180), 85+40*sin(grad* PI / 180), white);
+          }
+          for (int grad = 60; grad <= 120; grad++) {
+            it.draw_pixel_at(64+40*cos(grad* PI / 180), 85+40*sin(grad* PI / 180), white);
+          }
+
+
+
+          for (int grad = 135; grad <= 410; grad++) {
+            for (int sh = 45; sh<=48; sh++) {
+              it.draw_pixel_at(64+sh*cos(grad* PI / 180), 85+sh*sin(grad* PI / 180), blue);
+            }
+          }  
+  
+          it.line(0,130,22,130, white);          
+          it.line(102,130,128,130, white); 
+
+          it.strftime(25, 136, id(SEG24), lyellow,"%H %M", id(sntp_time).now());
+          static int i = 0;
+          i++;
+          if ((i % 2) == 0) 
+            it.print(65, 136, id(SEG24),lyellow,":");
+          it.print(0, 131, id(font11), lyellow, "TIME");
+
+          it.printf(70,0, id(SEG24), blue, "%3.0f", id(bme680_p).state);
+          it.printf(0, 0, id(SEG24), green, "%3.0f", id(bme680_iaq).state);
+
+
+          if (id(pm1).state); {
+            for (int grad = 270; grad <= (id(pm1).state/2) + 270; grad++) {
+              for (int sh = 53; sh<=60; sh++) {
+                it.draw_pixel_at(64+sh*cos(grad* PI / 360), 85+sh*sin(grad* PI / 360), green);
+              }
+            }  
+          }
+
+
+          it.printf(64, 80, id(SEG24), white, TextAlign::CENTER, "%.0f", id(pm1).state);
+          it.print(64, 105, id(font11), white, TextAlign::CENTER, "ppm");
+          it.print(64, 130, id(font11), white, TextAlign::CENTER, "PM1");
+
+
+
+      - id: page2
+        lambda: |- 
+          it.line(0,35,30,35, white);
+          it.line(98,35,128,35, white);
+          it.line(64,0,64,25, white);
           it.print(0, 22, id(font11), white, "TEMP");
           it.print(92, 22, id(font11), white, "HYDRO");
 
@@ -512,10 +576,156 @@ display:
               break;              
           }
 
-
           it.printf(64, 80, id(SEG24), white, TextAlign::CENTER, "%.0f", id(pm2).state);
           it.print(64, 105, id(font11), white, TextAlign::CENTER, "ppm");
           it.print(64, 130, id(font11), white, TextAlign::CENTER, "PM2.5");
+
+      - id: page3
+        lambda: |- 
+          it.line(0,35,30,35, white);
+          it.line(98,35,128,35, white);
+          it.line(64,0,64,25, white);
+          it.print(0, 22, id(font11), white, "VOC");
+          it.print(92, 22, id(font11), white, "CO2");
+
+          for (int grad = 130; grad <= 175; grad++) {
+            it.draw_pixel_at(64+60*cos(grad* PI / 180), 85+60*sin(grad* PI / 180), white);
+          }
+          for (int grad = 185; grad <= 260; grad++) {
+            it.draw_pixel_at(64+60*cos(grad* PI / 180), 85+60*sin(grad* PI / 180), white);
+          }
+          for (int grad = 280; grad <= 355; grad++) {
+            it.draw_pixel_at(64+60*cos(grad* PI / 180), 85+60*sin(grad* PI / 180), white);
+          }
+          for (int grad = 365; grad <= 410; grad++) {
+            it.draw_pixel_at(64+60*cos(grad* PI / 180), 85+60*sin(grad* PI / 180), white);
+          }
+          for (int grad = 135; grad <= 405; grad++) {
+            it.draw_pixel_at(64+40*cos(grad* PI / 180), 85+40*sin(grad* PI / 180), white);
+          }
+          for (int grad = 60; grad <= 120; grad++) {
+            it.draw_pixel_at(64+40*cos(grad* PI / 180), 85+40*sin(grad* PI / 180), white);
+          }
+
+
+
+          for (int grad = 135; grad <= 145; grad++) {
+            for (int sh = 45; sh<=48; sh++) {
+              it.draw_pixel_at(64+sh*cos(grad* PI / 180), 85+sh*sin(grad* PI / 180), green);
+            }
+          }  
+          for (int grad = 146; grad <= 155; grad++) {
+            for (int sh = 45; sh<=48; sh++) {
+              it.draw_pixel_at(64+sh*cos(grad* PI / 180), 85+sh*sin(grad* PI / 180), lgreen);
+            }
+          }  
+          for (int grad = 156; grad <= 165; grad++) {
+            for (int sh = 45; sh<=48; sh++) {
+              it.draw_pixel_at(64+sh*cos(grad* PI / 180), 85+sh*sin(grad* PI / 180), yellow);
+            }
+          } 
+          for (int grad = 166; grad <= 175; grad++) {
+            for (int sh = 45; sh<=48; sh++) {
+              it.draw_pixel_at(64+sh*cos(grad* PI / 180), 85+sh*sin(grad* PI / 180), lyellow);
+            }
+          } 
+          for (int grad = 176; grad <= 220; grad++) {
+            for (int sh = 45; sh<=48; sh++) {
+              it.draw_pixel_at(64+sh*cos(grad* PI / 180), 85+sh*sin(grad* PI / 180), red);
+            }
+          } 
+          for (int grad = 221; grad <= 410; grad++) {
+            for (int sh = 45; sh<=48; sh++) {
+              it.draw_pixel_at(64+sh*cos(grad* PI / 180), 85+sh*sin(grad* PI / 180), tred);
+            }
+          } 
+
+
+
+          it.line(0,130,22,130, white);          
+          it.line(102,130,128,130, white); 
+
+          it.strftime(25, 136, id(SEG24), lyellow,"%H %M", id(sntp_time).now());
+          static int i = 0;
+          i++;
+          if ((i % 2) == 0) 
+            it.print(65, 136, id(SEG24),lyellow,":");
+          it.print(0, 131, id(font11), lyellow, "TIME");
+
+          it.printf(70,0, id(SEG24), blue, "%3.0f", id(bme680_co2).state);
+          it.printf(0, 0, id(SEG24), green, "%3.0f", id(bme680_voc).state);
+
+
+          uint16_t vpm10 = (id(pm10).state);
+          switch (vpm10) {
+            case 0 ... 30:
+              if (id(pm10).state); {
+                for (int grad = 270; grad <= id(pm10).state + 270; grad++) {
+                  for (int sh = 53; sh<=60; sh++) {
+                    it.draw_pixel_at(64+sh*cos(grad* PI / 360), 85+sh*sin(grad* PI / 360), green);
+                  }
+                }  
+              }
+              break;
+            case 31 ... 60:
+              if (id(pm10).state); {
+                for (int grad = 270; grad <= id(pm10).state + 270; grad++) {
+                  for (int sh = 53; sh<=60; sh++) {
+                    it.draw_pixel_at(64+sh*cos(grad* PI / 360), 85+sh*sin(grad* PI / 360), lgreen);
+                  }
+                }  
+              }
+              break;
+            case 61 ... 90: 
+              if (id(pm10).state); {
+                for (int grad = 270; grad <= id(pm10).state + 270; grad++) {
+                  for (int sh = 53; sh<=60; sh++) {
+                    it.draw_pixel_at(64+sh*cos(grad* PI / 360), 85+sh*sin(grad* PI / 360), yellow);
+                  }
+                }  
+              }
+              break;
+            case 91 ... 120: 
+              if (id(pm10).state); {
+                for (int grad = 270; grad <= id(pm10).state + 270; grad++) {
+                  for (int sh = 53; sh<=60; sh++) {
+                    it.draw_pixel_at(64+sh*cos(grad* PI / 360), 85+sh*sin(grad* PI / 360), lyellow);
+                  }
+                }  
+              }
+              break;
+            case 121 ... 250: 
+              if (id(pm10).state); {
+                for (int grad = 270; grad <= id(pm10).state + 270; grad++) {
+                  for (int sh = 53; sh<=60; sh++) {
+                    it.draw_pixel_at(64+sh*cos(grad* PI / 360), 85+sh*sin(grad* PI / 360), red);
+                  }
+                }  
+              }
+              break;
+            case 251 ... 1000:
+              if (id(pm10).state); {
+                for (int grad = 270; grad <= id(pm10).state + 270; grad++) {
+                  for (int sh = 53; sh<=60; sh++) {
+                    it.draw_pixel_at(64+sh*cos(grad* PI / 360), 85+sh*sin(grad* PI / 360), tred);
+                  }
+                }  
+              }
+              break;
+            default: 
+              if (id(pm10).state); {
+                for (int grad = 270; grad <= id(pm10).state + 270; grad++) {
+                  for (int sh = 53; sh<=60; sh++) {
+                    it.draw_pixel_at(64+sh*cos(grad* PI / 360), 85+sh*sin(grad* PI / 360), blue);
+                  }
+                }  
+              }
+              break;              
+          }
+
+          it.printf(64, 80, id(SEG24), white, TextAlign::CENTER, "%.0f", id(pm10).state);
+          it.print(64, 105, id(font11), white, TextAlign::CENTER, "ppm");
+          it.print(64, 130, id(font11), white, TextAlign::CENTER, "PM10");
 
 
 interval:
@@ -560,5 +770,3 @@ time:
         then:
           - fan.turn_off:
               id: pmvent
-
-
