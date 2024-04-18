@@ -59,9 +59,11 @@ external_components:
   #    type: local
   #    path: my_components
  #   components: [ pm1006k ]
-  source: github://ananyevgv/esphome-components
-  components: [pm1006k]
-  refresh: 0s
+  - source: github://ananyevgv/esphome-components
+    components: [pm1006k]
+    refresh: 0s
+  - source: github://pr#6381
+    components: [ display, font ]
 
 color:
   - id: red
@@ -485,8 +487,6 @@ display:
             }
           } 
 
-
-
           it.line(0,130,22,130, white);          
           it.line(102,130,128,130, white); 
 
@@ -727,6 +727,94 @@ display:
           it.print(64, 105, id(font11), white, TextAlign::CENTER, "ppm");
           it.print(64, 130, id(font11), white, TextAlign::CENTER, "PM10");
 
+      - id: page4
+        lambda: |- 
+          auto timeY = id(sntp_time).now();
+          // Центр 
+          int centerX = 64; 
+          int centerY = 64; 
+          int radius = 64;
+
+          // Красная окружность
+          for (int r=63; r<=64; r++) {
+            it.circle(centerX, centerY, r, red);
+          }
+          // Белаяя окружность
+          for (int r=60; r<=62; r++) {
+            it.circle(centerX, centerY, r, white);
+          }
+
+          // метки часов
+          for(int h = 0; h < 12; h++) {
+            int hourAngle = (h * 30) - 90;
+            it.line_at_angle(centerX, centerY, hourAngle, radius - 10, radius-4, white);
+          }
+
+          // метки минут
+          for(int m = 0; m < 60; m++) {
+            int minuteAngle = (m * 6) - 90;
+            it.line_at_angle(centerX, centerY, minuteAngle, radius - 6, radius-4, white);
+          }
+
+
+          //sec
+
+          uint8_t ds = timeY.second;
+          // 64 базовая точка, 60 высота треугольника, 6 градусов на 1 секунду (360/60)
+          float ssmv = (ds*6+270)* PI / 180;
+          int sy = 64+58*cos(ssmv);
+          int sx = 64+58*sin(ssmv);
+  
+          // 64 базовая точка, 5 ширина треугольника, 6 градусов на 1 секунду (360/60)
+          float ssmp = ds*6 * PI / 180;
+          int snpy = 64+5*cos(ssmp);
+          int snpx = 64+5*sin(ssmp);
+
+          // 64 базовая точка, 5 ширина треугольника, 6 градусов на 1 секунду (360/60)
+          float ssml = (ds*6+180) * PI / 180;
+          int snly = 64+5*cos(ssml);
+          int snlx = 64+5*sin(ssml);
+
+          it.filled_triangle(sy, sx, snly, snlx, snpy, snpx, red);
+
+          //minut
+          uint8_t dm = timeY.minute;
+          // 64 базовая точка, 60 высота треугольника, 6 градусов на 1 минуту (360/60)
+          float msmv = (dm*6+270)* PI / 180;
+          int my = 64+58*cos(msmv);
+          int mx = 64+58*sin(msmv);
+  
+          // 64 базовая точка, 5 ширина треугольника, 6 градусов на 1 минуту  (360/60)
+          float msmp = dm*6 * PI / 180;
+          int mnpy = 64+5*cos(msmp);
+          int mnpx = 64+5*sin(msmp);
+
+          // 64 базовая точка, 5 ширина треугольника, 6 градусов на 1 минуту  (360/60)
+          float msml = (dm*6+180) * PI / 180;
+          int mnly = 64+5*cos(msml);
+          int mnlx = 64+5*sin(msml);
+
+          it.filled_triangle(my, mx, mnly, mnlx, mnpy, mnpx, green);
+
+          //hour
+          uint8_t dh = timeY.hour;
+          // 64 базовая точка, 5 высота треугольника, 30 градусов на 1 час  (360/60)
+          float hsmv = (dh*30+270)* PI / 180;
+          int hy = 64+40*cos(hsmv);
+          int hx = 64+40*sin(hsmv);
+  
+          // 64 базовая точка, 5 ширина треугольника, 30 градусов на 1 час(360/60)
+          float hsmp = dh*30 * PI / 180;
+          int hnpy = 64+5*cos(hsmp);
+          int hnpx = 64+5*sin(hsmp);
+
+          // 64 базовая точка, 5 ширина треугольника, 30 градусов на 1 час (360/60)
+          float hsml = (dh*30+180) * PI / 180;
+          int hnly = 64+5*cos(hsml);
+          int hnlx = 64+5*sin(hsml);
+
+          it.filled_triangle(hy, hx, hnly, hnlx, hnpy, hnpx, white);
+          it.filled_circle(64, 64, 10, blue);
 
 interval:
   - interval: 5s
@@ -735,6 +823,7 @@ interval:
       - component.update: my_display 
 
 web_server:
+  version: 3
   port: 80
   auth:
     username: !secret web_user
