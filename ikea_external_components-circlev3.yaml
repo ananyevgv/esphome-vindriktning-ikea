@@ -62,8 +62,8 @@ external_components:
   - source: github://ananyevgv/esphome-components
     components: [pm1006k]
     refresh: 0s
-  - source: github://pr#6381
-    components: [ display, font ]
+ # - source: github://pr#6381
+ #   components: [ display, font ]
 
 color:
   - id: red
@@ -732,14 +732,14 @@ display:
           auto timeY = id(sntp_time).now();
           // Центр 
           int centerX = 64; 
-          int centerY = 64; 
+          int centerY = 80; 
           int radius = 64;
 
           // Красная окружность
           for (int r=63; r<=64; r++) {
             it.circle(centerX, centerY, r, red);
           }
-          // Белаяя окружность
+          // Серая окружность
           for (int r=60; r<=62; r++) {
             it.circle(centerX, centerY, r, white);
           }
@@ -762,59 +762,59 @@ display:
           uint8_t ds = timeY.second;
           // 64 базовая точка, 60 высота треугольника, 6 градусов на 1 секунду (360/60)
           float ssmv = (ds*6+270)* PI / 180;
-          int sy = 64+58*cos(ssmv);
-          int sx = 64+58*sin(ssmv);
-  
+          int sy = centerY+55*sin(ssmv);
+          int sx = centerX+55*cos(ssmv);
+          it.line(centerX, centerY, sx, sy, red);
           // 64 базовая точка, 5 ширина треугольника, 6 градусов на 1 секунду (360/60)
-          float ssmp = ds*6 * PI / 180;
-          int snpy = 64+5*cos(ssmp);
-          int snpx = 64+5*sin(ssmp);
+          //float ssmp = ds*6 * PI / 180;
+          //int snpy = centerY+5*cos(ssmp);
+          //int snpx = centerX+5*sin(ssmp);
 
           // 64 базовая точка, 5 ширина треугольника, 6 градусов на 1 секунду (360/60)
-          float ssml = (ds*6+180) * PI / 180;
-          int snly = 64+5*cos(ssml);
-          int snlx = 64+5*sin(ssml);
+          // float ssml = (ds*6+180) * PI / 180;
+          // int snly = centerY+5*cos(ssml);
+          // int snlx = centerX+5*sin(ssml);
 
-          it.filled_triangle(sy, sx, snly, snlx, snpy, snpx, red);
+          // it.filled_triangle(sy, sx, snly, snlx, snpy, snpx, red);
 
           //minut
           uint8_t dm = timeY.minute;
           // 64 базовая точка, 60 высота треугольника, 6 градусов на 1 минуту (360/60)
-          float msmv = (dm*6+270)* PI / 180;
-          int my = 64+58*cos(msmv);
-          int mx = 64+58*sin(msmv);
+          float msmv = (dm*6-90)* PI / 180;
+          int my = centerY+55*sin(msmv);
+          int mx = centerX+55*cos(msmv);
   
           // 64 базовая точка, 5 ширина треугольника, 6 градусов на 1 минуту  (360/60)
-          float msmp = dm*6 * PI / 180;
-          int mnpy = 64+5*cos(msmp);
-          int mnpx = 64+5*sin(msmp);
+          float msmp = (dm*6-180) * PI / 180;
+          int mnpy = centerY+5*sin(msmp);
+          int mnpx = centerX+5*cos(msmp);
 
           // 64 базовая точка, 5 ширина треугольника, 6 градусов на 1 минуту  (360/60)
-          float msml = (dm*6+180) * PI / 180;
-          int mnly = 64+5*cos(msml);
-          int mnlx = 64+5*sin(msml);
+          float msml = (dm*6) * PI / 180;
+          int mnly = centerY+5*sin(msml);
+          int mnlx = centerX+5*cos(msml);
 
-          it.filled_triangle(my, mx, mnly, mnlx, mnpy, mnpx, green);
+          it.filled_triangle(mx, my, mnlx, mnly, mnpx, mnpy, white);
 
           //hour
           uint8_t dh = timeY.hour;
           // 64 базовая точка, 5 высота треугольника, 30 градусов на 1 час  (360/60)
-          float hsmv = (dh*30+270)* PI / 180;
-          int hy = 64+40*cos(hsmv);
-          int hx = 64+40*sin(hsmv);
+          float hsmv = (dh*30-90)* PI / 180;
+          int hy = centerY+40*sin(hsmv);
+          int hx = centerX+40*cos(hsmv);
   
           // 64 базовая точка, 5 ширина треугольника, 30 градусов на 1 час(360/60)
-          float hsmp = dh*30 * PI / 180;
-          int hnpy = 64+5*cos(hsmp);
-          int hnpx = 64+5*sin(hsmp);
+          float hsmp = (dh*30-180) * PI / 180;
+          int hnpy = centerY+5*sin(hsmp);
+          int hnpx = centerX+5*cos(hsmp);
 
           // 64 базовая точка, 5 ширина треугольника, 30 градусов на 1 час (360/60)
-          float hsml = (dh*30+180) * PI / 180;
-          int hnly = 64+5*cos(hsml);
-          int hnlx = 64+5*sin(hsml);
+          float hsml = (dh*30) * PI / 180;
+          int hnly = centerY+5*sin(hsml);
+          int hnlx = centerX+5*cos(hsml);
 
-          it.filled_triangle(hy, hx, hnly, hnlx, hnpy, hnpx, white);
-          it.filled_circle(64, 64, 10, blue);
+          it.filled_triangle(hx, hy, hnlx, hnly, hnpx, hnpy, white);
+          it.filled_circle(centerX, centerY, 7, blue);
 
 interval:
   - interval: 5s
@@ -859,5 +859,6 @@ time:
         then:
           - fan.turn_off:
               id: pmvent
+
 
 
