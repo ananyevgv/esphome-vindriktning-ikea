@@ -389,6 +389,8 @@ display:
     update_interval: 1s
     id: my_display
     pages:
+# Первая страница дисплея выводим качество воздуха, давление, цифровые часы, значок работы вентилятора,
+# индикатор сонца над горизонтом, содержание пыли PM1 (не нормируется)
       - id: page1
         lambda: |- 
 
@@ -400,7 +402,8 @@ display:
 
           it.line(0,130,22,130, white);          
           it.line(102,130,128,130, white); 
-
+          
+          // Цыфровые часы
           it.strftime(25, 136, id(SEG24), lyellow,"%H %M", id(sntp_time).now());
           static int i = 0;
           i++;
@@ -408,13 +411,18 @@ display:
             it.print(65, 136, id(SEG24),lyellow,":");
           it.print(0, 131, id(font11), lyellow, "TIME");
 
+          // давление
           it.printf(70,0, id(SEG24), blue, "%3.0f", id(bme680_p).state);
+
+          // качество воздуха
           it.printf(0, 0, id(SEG24), green, "%3.0f", id(bme680_iaq).state);
 
+          //оформление центра
           it.printf(64, 80, id(SEG24), white, TextAlign::CENTER, "%.0f", id(pm1).state);
           it.print(64, 105, id(font11), white, TextAlign::CENTER, "ppm");
           it.print(64, 130, id(font11), white, TextAlign::CENTER, "PM1");
-
+          
+          // Индикатор сонца над горизонтом
           if ((id(elevation).state) > 0) {
             id(g_sun).next_frame();
             it.image(110, 140, id(g_sun), yellow);
@@ -423,6 +431,7 @@ display:
             it.image(110, 140, id(g_moon), white);
             id(g_moon).next_frame();
             }
+          // Состояние вентилятора
           if (id(vent_bin).state) {
             it.image(0, 140, id(g_fan));
             id(g_fan).next_frame();
@@ -481,7 +490,8 @@ display:
               it.filled_circle(centerX+zradius*cos(radian), centerY+zradius*sin(radian), width, green);
             }  
           }  
-
+# Вторая страница дисплея выводим температуру, влажность, цифровые часы, значок работы вентилятора,
+# индикатор сонца над горизонтом, содержание пыли PM2.5 цвет изменяется в зависимости от уровня (нормируется)
       - id: page2
         lambda: |- 
           it.line(0,35,30,35, white);
@@ -492,26 +502,46 @@ display:
 
           it.line(0,130,22,130, white);          
           it.line(102,130,128,130, white); 
-
+          
+          // цифровые часы
           it.strftime(25, 136, id(SEG24), lyellow,"%H %M", id(sntp_time).now());
           static int i = 0;
           i++;
           if ((i % 2) == 0) 
             it.print(65, 136, id(SEG24),lyellow,":");
           it.print(0, 131, id(font11), lyellow, "TIME");
-
+          
+          // влажность
           it.printf(70,0, id(SEG24), blue, "%2.0f", id(bme680_h).state);
           it.print(110, 0, id(icon_font), blue, "\U0000f87e");
-
+          
+          // температура
           uint16_t vt = (id(bme680_t).state);
           float td;
           float tc = modf( vt, &td);
           it.printf(0, 0, id(SEG24), green, "%2.0f.", td);
           it.printf(40, 12, id(SEG12), green, "%1.0f", tc*10);
           it.print(38, 0, id(font11), green, "°С");
+
+          // оформление центра
           it.printf(64, 80, id(SEG24), white, TextAlign::CENTER, "%.0f", id(pm2).state);
           it.print(64, 105, id(font11), white, TextAlign::CENTER, "ppm");
           it.print(64, 130, id(font11), white, TextAlign::CENTER, "PM2.5");
+
+          // Индикатор сонца над горизонтом
+          if ((id(elevation).state) > 0) {
+            id(g_sun).next_frame();
+            it.image(110, 140, id(g_sun), yellow);
+            }
+          else {
+            it.image(110, 140, id(g_moon), white);
+            id(g_moon).next_frame();
+            }
+          // Состояние вентилятора
+          if (id(vent_bin).state) {
+            it.image(0, 140, id(g_fan));
+            id(g_fan).next_frame();
+          }
 
           // Размеры
           int centerX = 64; 
@@ -638,6 +668,8 @@ display:
               }
               break;              
           }
+# Третья страница дисплея выводим содержание органических вешеств, углекислый газ, цифровые часы, значок работы вентилятора,
+# индикатор сонца над горизонтом, содержание пыли PM10 цвет изменяется в зависимости от уровня (нормируется)          
       - id: page3
         lambda: |- 
           it.line(0,35,30,35, white);
@@ -645,14 +677,11 @@ display:
           it.line(64,0,64,25, white);
           it.print(0, 22, id(font11), white, "VOC");
           it.print(92, 22, id(font11), white, "CO2");
-
-          it.printf(64, 80, id(SEG24), white, TextAlign::CENTER, "%.0f", id(pm10).state);
-          it.print(64, 105, id(font11), white, TextAlign::CENTER, "ppm");
-          it.print(64, 130, id(font11), white, TextAlign::CENTER, "PM10");
-
+          
           it.line(0,130,22,130, white);          
           it.line(102,130,128,130, white); 
 
+          // цифровые часы
           it.strftime(25, 136, id(SEG24), lyellow,"%H %M", id(sntp_time).now());
           static int i = 0;
           i++;
@@ -660,10 +689,31 @@ display:
             it.print(65, 136, id(SEG24),lyellow,":");
           it.print(0, 131, id(font11), lyellow, "TIME");
 
+          // углекислый газ
           it.printf(70,0, id(SEG24), blue, "%3.0f", id(bme680_co2).state);
+
+          // органические вешества
           it.printf(0, 0, id(SEG24), green, "%3.0f", id(bme680_voc).state);
 
+          // оформление центра
+          it.printf(64, 80, id(SEG24), white, TextAlign::CENTER, "%.0f", id(pm10).state);
+          it.print(64, 105, id(font11), white, TextAlign::CENTER, "ppm");
+          it.print(64, 130, id(font11), white, TextAlign::CENTER, "PM10");
 
+          // Индикатор сонца над горизонтом
+          if ((id(elevation).state) > 0) {
+            id(g_sun).next_frame();
+            it.image(110, 140, id(g_sun), yellow);
+            }
+          else {
+            it.image(110, 140, id(g_moon), white);
+            id(g_moon).next_frame();
+            }
+          // Состояние вентилятора
+          if (id(vent_bin).state) {
+            it.image(0, 140, id(g_fan));
+            id(g_fan).next_frame();
+          }
           
           // Размеры
           int centerX = 64; 
@@ -791,27 +841,56 @@ display:
               }
               break;              
           }
+# Четвертая страница дисплея выводим значок работы вентилятора,индикатор сонца над горизонтом, стрелочные часы
       - id: page4
         lambda: |- 
           it.image(0, 0, id(clok));   
           auto timeY = id(sntp_time).now();
 
+          // Индикатор сонца над горизонтом
+          if ((id(elevation).state) > 0) {
+            id(g_sun).next_frame();
+            it.image(110, 140, id(g_sun), yellow);
+            }
+          else {
+            it.image(110, 140, id(g_moon), white);
+            id(g_moon).next_frame();
+            }
+          // Состояние вентилятора
+          if (id(vent_bin).state) {
+            it.image(0, 140, id(g_fan));
+            id(g_fan).next_frame();
+          }
+          
           // Центр 
           int centerX = 64; 
           int centerY = 80; 
           int radius = 64;
           int width = 3;
           
-          //sec
-          uint8_t ds = timeY.second;
-          // 6 градусов на 1 секунду (360/60)
-          float ssmv = (ds*6+270)* PI / 180;
-          int sy = centerY+(radius-10)*sin(ssmv);
-          int sx = centerX+(radius-10)*cos(ssmv);
-          it.line(centerX, centerY, sx, sy, red);
+          //hour
+          uint8_t dh = timeY.hour;
+          uint8_t dm = timeY.minute;
+
+          // 30 градусов на 1 час  (360/60)
+          float hsmv = (dh*30 + dm/2-90)* PI / 180;
+          int hy = centerY+(radius-25)*sin(hsmv);
+          int hx = centerX+(radius-25)*cos(hsmv);
+  
+          // 30 градусов на 1 час(360/60)
+          float hsmp = (dh*30 + dm/2-180) * PI / 180;
+          int hnpy = centerY+width*sin(hsmp);
+          int hnpx = centerX+width*cos(hsmp);
+
+          // 30 градусов на 1 час (360/60)
+          float hsml = (dh*30 + dm/2) * PI / 180;
+          int hnly = centerY+width*sin(hsml);
+          int hnlx = centerX+width*cos(hsml);
+
+          it.filled_triangle(hx, hy, hnlx, hnly, hnpx, hnpy, white);
+
 
           //minut
-          uint8_t dm = timeY.minute;
           // 6 градусов на 1 минуту (360/60)
           float msmv = (dm*6-90)* PI / 180;
           int my = centerY+(radius-10)*sin(msmv);
@@ -829,26 +908,21 @@ display:
 
           it.filled_triangle(mx, my, mnlx, mnly, mnpx, mnpy, white);
 
-          //hour
-          uint8_t dh = timeY.hour;
-          // 30 градусов на 1 час  (360/60)
-          float hsmv = (dh*30 + dm/2-90)* PI / 180;
-          int hy = centerY+(radius-25)*sin(hsmv);
-          int hx = centerX+(radius-25)*cos(hsmv);
-  
-          // 30 градусов на 1 час(360/60)
-          float hsmp = (dh*30 + dm/2-180) * PI / 180;
-          int hnpy = centerY+width*sin(hsmp);
-          int hnpx = centerX+width*cos(hsmp);
+          //sec
+          uint8_t ds = timeY.second;
+          // 6 градусов на 1 секунду (360/60)
+          float ssmv = (ds*6+270)* PI / 180;
+          int sy = centerY+(radius-10)*sin(ssmv);
+          int sx = centerX+(radius-10)*cos(ssmv);
+          it.line(centerX, centerY, sx, sy, tred);
+          
+          int syz = centerY-(radius-50)*sin(ssmv);
+          int sxz = centerX-(radius-50)*cos(ssmv);
+          it.line(centerX, centerY, sxz, syz, tred);
 
-          // 30 градусов на 1 час (360/60)
-          float hsml = (dh*30 + dm/2) * PI / 180;
-          int hnly = centerY+width*sin(hsml);
-          int hnlx = centerX+width*cos(hsml);
-
-          it.filled_triangle(hx, hy, hnlx, hnly, hnpx, hnpy, white);
+          // Точки по центру
           it.filled_circle(centerX, centerY, 5, white);
-
+          it.filled_circle(centerX, centerY, 3,  tred);
 
 
 interval:
@@ -894,4 +968,3 @@ time:
         then:
           - fan.turn_off:
               id: pmvent
-
