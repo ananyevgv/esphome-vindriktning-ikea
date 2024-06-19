@@ -38,10 +38,10 @@ https://www.wemos.cc/en/latest/d1_mini_shield/tft_i2c_connector.html
 |scl|scl|
 |sda|sda|
 
-# display_v2.yaml  
+# [display_v2.yaml](https://github.com/ananyevgv/esphome-vindriktning-ikea/blob/main/ikea_external_components-v2.yaml)
 <img src="https://github.com/ananyevgv/esphome-vindriktning-ikea/blob/main/v2.jpg" height="300" alt="v2">
 
-# display_v3.yaml 
+# [display_v3.yaml](https://github.com/ananyevgv/esphome-vindriktning-ikea/blob/main/ikea-circle-new.yaml)
 <img src="https://github.com/ananyevgv/esphome-vindriktning-ikea/blob/main/ikeaV3.jpg" height="300" alt="board">
 
 # ESPHome component PM1006k с родным контроллером
