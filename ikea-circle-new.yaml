@@ -107,7 +107,13 @@ image:
   - file: "picture/clok-240-300.jpg"
     id: clok
     resize: 128x160 
-    type: RGB565
+    type: RGB565 
+   
+  - file: "picture/barometr.jpg"
+    id: barometr
+    resize: 128x160 
+    type: RGB565  
+
 
 animation:
   - file: "picture/sun-wilao.gif"
@@ -862,68 +868,157 @@ display:
             id(g_fan).next_frame();
           }
           
-          // Центр 
+          // Центр, радиус, толщина половины стрелки, отступы
           int centerX = 64; 
           int centerY = 80; 
           int radius = 64;
           int width = 3;
-          
-          //hour
+          int h_otstup = 25;
+          int m_otstup = 10;
+          int s_otstup = 10;
+          int ns_otstup = 50;
+
+          //hour, minute
           uint8_t dh = timeY.hour;
           uint8_t dm = timeY.minute;
 
-          // 30 градусов на 1 час  (360/60)
+          // Расчет верхней точки часовой стрелки (30 градусов на 1 час  (360/12)) с учетом минут
           float hsmv = (dh*30 + dm/2-90)* PI / 180;
-          int hy = centerY+(radius-25)*sin(hsmv);
-          int hx = centerX+(radius-25)*cos(hsmv);
-  
-          // 30 градусов на 1 час(360/60)
+          int hy = centerY+(radius-h_otstup)*sin(hsmv);
+          int hx = centerX+(radius-h_otstup)*cos(hsmv);
+
+          // Расчет нижней правой точки часовой стрелки (30 градусов на 1 час  (360/12))  
           float hsmp = (dh*30 + dm/2-180) * PI / 180;
           int hnpy = centerY+width*sin(hsmp);
           int hnpx = centerX+width*cos(hsmp);
 
-          // 30 градусов на 1 час (360/60)
+          // Расчет нижней левой точки часовой стрелки (30 градусов на 1 час  (360/12)) 
           float hsml = (dh*30 + dm/2) * PI / 180;
           int hnly = centerY+width*sin(hsml);
           int hnlx = centerX+width*cos(hsml);
 
-          it.filled_triangle(hx, hy, hnlx, hnly, hnpx, hnpy, white);
+          // Одноцветная часовая стрелка
+          // it.filled_triangle(hx, hy, hnlx, hnly, hnpx, hnpy, white);
+
+          // Двух цветная часовая стрелка
+          it.filled_triangle(hx, hy, centerX, centerY, hnpx, hnpy, green);
+          it.filled_triangle(hx, hy, hnlx, hnly, centerX, centerY, yellow);
 
 
           //minut
-          // 6 градусов на 1 минуту (360/60)
+
+          // Расчет верхней точки миутной стрелки 6 градусов на 1 минуту (360/60)
           float msmv = (dm*6-90)* PI / 180;
-          int my = centerY+(radius-10)*sin(msmv);
-          int mx = centerX+(radius-10)*cos(msmv);
+          int my = centerY+(radius-m_otstup)*sin(msmv);
+          int mx = centerX+(radius-m_otstup)*cos(msmv);
   
-          //  6 градусов на 1 минуту  (360/60)
+          // Расчет нижней правой точки миутной стрелки 6 градусов на 1 минуту  (360/60)
           float msmp = (dm*6-180) * PI / 180;
           int mnpy = centerY+width*sin(msmp);
           int mnpx = centerX+width*cos(msmp);
 
-          //  6 градусов на 1 минуту  (360/60)
+          // Расчет нижней левой точки миутной стрелки  6 градусов на 1 минуту  (360/60)
           float msml = (dm*6) * PI / 180;
           int mnly = centerY+width*sin(msml);
           int mnlx = centerX+width*cos(msml);
 
-          it.filled_triangle(mx, my, mnlx, mnly, mnpx, mnpy, white);
+          // Одноцветная минутная стрелка
+          //it.filled_triangle(mx, my, mnlx, mnly, mnpx, mnpy, white);
+
+          // Двух цветная минутная стрелка
+          it.filled_triangle(mx, my, mnlx, mnly, centerX, centerY, yellow);
+          it.filled_triangle(mx, my, centerX, centerY, mnpx, mnpy, green);
+
 
           //sec
           uint8_t ds = timeY.second;
-          // 6 градусов на 1 секунду (360/60)
+
+          // Расчет верхней точки секундной стрелки 6 градусов на 1 секунду (360/60)
           float ssmv = (ds*6+270)* PI / 180;
-          int sy = centerY+(radius-10)*sin(ssmv);
-          int sx = centerX+(radius-10)*cos(ssmv);
+          int sy = centerY+(radius-s_otstup)*sin(ssmv);
+          int sx = centerX+(radius-s_otstup)*cos(ssmv);
+
+          // Секундная стрелка
           it.line(centerX, centerY, sx, sy, tred);
-          
-          int syz = centerY-(radius-50)*sin(ssmv);
-          int sxz = centerX-(radius-50)*cos(ssmv);
+
+          // Расчет нижней точки второй части секундной стрелки 6 градусов на 1 секунду (360/60)          
+          int syz = centerY-(radius-ns_otstup)*sin(ssmv);
+          int sxz = centerX-(radius-ns_otstup)*cos(ssmv);
+
+          // Вторая нижняя часть секундной стрелки 
           it.line(centerX, centerY, sxz, syz, tred);
 
           // Точки по центру
           it.filled_circle(centerX, centerY, 5, white);
           it.filled_circle(centerX, centerY, 3,  tred);
 
+      - id: page5
+        lambda: |-
+          it.image(0, 0, id(barometr)); 
+
+          // Центр, радиус, верхний отступ стрелки, наконечник стрелки, грань наконечника стрелки, угол отклонения наконечника от стрелки 
+          int centerX = 64; 
+          int centerY = 80; 
+          int radius = 64;
+          int otstup = 10;
+          int n_otstup = 50;
+          int strel = 5;
+          int gstrel = 10;
+          // int gnstrel = 10;
+          int nak_grad = 5;
+
+          // Максимальное значение, начало и конец зоны индикации в градусах
+          int zmax = 800;
+          int n_grad = 135; 
+          int k_grad = 410;
+          // расчет цены деления, расчет угла по показаниям датчика?
+          int grad = (k_grad - n_grad);
+          float shag = zmax / (grad * (PI / 180));
+          float grad_ind = id(bme680_p).state / shag;
+          float grad_n = nak_grad * (PI / 180);
+
+          // Верхняя точка стрелки
+          int ind_y = centerY+(radius - otstup)*sin(grad_ind);
+          int ind_x = centerX+(radius - otstup)*cos(grad_ind);
+
+          // Нижняя точка наконечника стрелки
+          int ind_y2 = centerY+(radius - (otstup + strel))*sin(grad_ind);
+          int ind_x2 = centerX+(radius - (otstup + strel))*cos(grad_ind);
+
+          // Нижняя левая точка наконечника стрелки
+          int ind_yl = centerY+(radius - (otstup + gstrel))*sin(grad_ind - grad_n);
+          int ind_xl = centerX+(radius - (otstup + gstrel))*cos(grad_ind - grad_n);
+
+          // Нижняя правая точка наконечника стрелки
+          int ind_yp = centerY+(radius - (otstup + gstrel))*sin(grad_ind + grad_n);
+          int ind_xp = centerX+(radius - (otstup + gstrel))*cos(grad_ind + grad_n);
+
+          //Наконечник стрелки левая часть
+          it.filled_triangle(ind_x, ind_y, ind_xl, ind_yl, ind_x2, ind_y2, tred);
+
+          //Наконечник стрелки правая часть
+          it.filled_triangle(ind_x, ind_y, ind_xp, ind_yp, ind_x2, ind_y2, tred);
+
+          //Стрелка 
+          it.line(centerX, centerY, ind_x2, ind_y2, tred);
+
+          // Расчет нижней точки второй части стрелки       
+          int ind_yn = centerY-(radius-n_otstup)*sin(grad_ind);
+          int ind_xn = centerX-(radius-n_otstup)*cos(grad_ind);
+
+          // Нижняя левая точка  нижнего наконечника стрелки
+          int ind_ynl = centerY-(radius - (n_otstup + gstrel))*sin(grad_ind - grad_n);
+          int ind_xnl = centerX-(radius - (n_otstup + gstrel))*cos(grad_ind - grad_n);
+
+          // Нижняя правая точка нижего наконечника стрелки
+          int ind_ynp = centerY-(radius - (n_otstup + gstrel))*sin(grad_ind + grad_n);
+          int ind_xnp = centerX-(radius - (n_otstup + gstrel))*cos(grad_ind + grad_n);
+
+          // Вторая нижняя часть  стрелки 
+          it.line(centerX, centerY, ind_xn, ind_yn, tred);
+
+          //Наконечник нижние стрелки  
+          it.filled_triangle(ind_xn, ind_yn, ind_xnl, ind_ynl, ind_xnp, ind_ynp, green);
 
 interval:
   - interval: 5s
