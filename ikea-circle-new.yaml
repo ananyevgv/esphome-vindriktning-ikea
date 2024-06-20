@@ -50,7 +50,8 @@ api:
 #Включаем загрузку по воздуху
 ota:
   password: !secret ota_pass
-
+  platform: esphome
+  
 wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_password
@@ -198,7 +199,7 @@ binary_sensor:
 
   - platform: gpio
     pin: 17
-    name: "LCD backlight"
+    name: "LCD backlight on/off"
     device_class: light
     on_press:
       then:
@@ -296,6 +297,17 @@ sensor:
       filters:
         - median
 
+  - platform: copy # Pressure 1h
+    source_id: bme680_p
+    name: "${name} pressure 1h"
+    id: pressure_1h
+    filters:
+      - median:
+          window_size: 60 #1441
+          send_every: 61 #1440
+          send_first_at: 1
+
+
   - platform: bh1750
     name: "${name} Illuminance"
     id: i_clock
@@ -369,6 +381,7 @@ light:
     name: "light_LCD"
     id: lcd
     output: light_LCD
+    icon: mdi:television-ambient-light
  #   internal: true
 # Example output entry
 output:
@@ -952,9 +965,10 @@ display:
           it.filled_circle(centerX, centerY, 5, white);
           it.filled_circle(centerX, centerY, 3,  tred);
 
+# Пятая страница дисплея выводим барометр
       - id: page5
         lambda: |-
-          it.image(0, 0, id(barometr)); 
+          it.image(0, 20, id(barometr)); 
 
           // Центр, радиус, верхний отступ стрелки, наконечник стрелки, грань наконечника стрелки, угол отклонения наконечника от стрелки 
           int centerX = 64; 
@@ -965,60 +979,123 @@ display:
           int strel = 5;
           int gstrel = 10;
           // int gnstrel = 10;
-          int nak_grad = 5;
+          int nak_grad = 7;
 
-          // Максимальное значение, начало и конец зоны индикации в градусах
-          int zmax = 800;
+          // Максимальное значение, минимальное значение, начало и конец зоны индикации в градусах
+          float zmax = 800;
+          int zmin = 700;
+          // 90+45 градусов
           int n_grad = 135; 
-          int k_grad = 410;
-          // расчет цены деления, расчет угла по показаниям датчика?
-          int grad = (k_grad - n_grad);
-          float shag = zmax / (grad * (PI / 180));
-          float grad_ind = id(bme680_p).state / shag;
+          // 360+45 градусов
+          int k_grad = 405;
+          // расчет цены деления, расчет угла по показаниям датчика
+
+          float shag =  (k_grad-n_grad) / (zmax - zmin);
           float grad_n = nak_grad * (PI / 180);
 
-          // Верхняя точка стрелки
-          int ind_y = centerY+(radius - otstup)*sin(grad_ind);
-          int ind_x = centerX+(radius - otstup)*cos(grad_ind);
+          ///////////////////////////////////////////////////////////////////////////////////
+          if (id(pressure_1h).state != id(bme680_p).state) {
 
-          // Нижняя точка наконечника стрелки
-          int ind_y2 = centerY+(radius - (otstup + strel))*sin(grad_ind);
-          int ind_x2 = centerX+(radius - (otstup + strel))*cos(grad_ind);
+            float pressure_kor =0;
+            if (id(pressure_1h).state > id(bme680_p).state) {
+              pressure_kor = 10; 
+            }
+            else {
+              pressure_kor = -10; 
+            }
 
-          // Нижняя левая точка наконечника стрелки
-          int ind_yl = centerY+(radius - (otstup + gstrel))*sin(grad_ind - grad_n);
-          int ind_xl = centerX+(radius - (otstup + gstrel))*cos(grad_ind - grad_n);
+            float grad_ind_d = (n_grad + (id(pressure_1h).state - zmin + pressure_kor)*shag) *(PI / 180);
 
-          // Нижняя правая точка наконечника стрелки
-          int ind_yp = centerY+(radius - (otstup + gstrel))*sin(grad_ind + grad_n);
-          int ind_xp = centerX+(radius - (otstup + gstrel))*cos(grad_ind + grad_n);
+            // Верхняя точка вспомогательной стрелки
+            int v_ind_y = centerY+(radius - otstup)*sin(grad_ind_d);
+            int v_ind_x = centerX+(radius - otstup)*cos(grad_ind_d);
 
-          //Наконечник стрелки левая часть
-          it.filled_triangle(ind_x, ind_y, ind_xl, ind_yl, ind_x2, ind_y2, tred);
+            // Нижняя точка наконечника вспомогательной стрелки
+            int v_ind_y2 = centerY+(radius - (otstup + strel))*sin(grad_ind_d);
+            int v_ind_x2 = centerX+(radius - (otstup + strel))*cos(grad_ind_d);
 
-          //Наконечник стрелки правая часть
-          it.filled_triangle(ind_x, ind_y, ind_xp, ind_yp, ind_x2, ind_y2, tred);
+            // Нижняя левая точка наконечника вспомогательной стрелки
+            int v_ind_yl = centerY+(radius - (otstup + gstrel))*sin(grad_ind_d - grad_n);
+            int v_ind_xl = centerX+(radius - (otstup + gstrel))*cos(grad_ind_d - grad_n);
 
-          //Стрелка 
-          it.line(centerX, centerY, ind_x2, ind_y2, tred);
+            // Нижняя правая точка наконечника вспомогательной стрелки
+            int v_ind_yp = centerY+(radius - (otstup + gstrel))*sin(grad_ind_d + grad_n);
+            int v_ind_xp = centerX+(radius - (otstup + gstrel))*cos(grad_ind_d + grad_n);
 
-          // Расчет нижней точки второй части стрелки       
-          int ind_yn = centerY-(radius-n_otstup)*sin(grad_ind);
-          int ind_xn = centerX-(radius-n_otstup)*cos(grad_ind);
+            //Наконечник  вспомогательной стрелки левая часть
+            it.filled_triangle(v_ind_x, v_ind_y, v_ind_xl, v_ind_yl, v_ind_x2, v_ind_y2, white);
 
-          // Нижняя левая точка  нижнего наконечника стрелки
-          int ind_ynl = centerY-(radius - (n_otstup + gstrel))*sin(grad_ind - grad_n);
-          int ind_xnl = centerX-(radius - (n_otstup + gstrel))*cos(grad_ind - grad_n);
+            //Наконечник  вспомогательной стрелки правая часть
+            it.filled_triangle(v_ind_x, v_ind_y, v_ind_xp, v_ind_yp, v_ind_x2, v_ind_y2, white);
 
-          // Нижняя правая точка нижего наконечника стрелки
-          int ind_ynp = centerY-(radius - (n_otstup + gstrel))*sin(grad_ind + grad_n);
-          int ind_xnp = centerX-(radius - (n_otstup + gstrel))*cos(grad_ind + grad_n);
+            // вспомогательная стрелка 
+            it.line(centerX, centerY, v_ind_x2, v_ind_y2, white);
 
-          // Вторая нижняя часть  стрелки 
-          it.line(centerX, centerY, ind_xn, ind_yn, tred);
+            // Расчет нижней точки второй части  вспомогательной стрелки       
+            int v_ind_yn = centerY-(radius-n_otstup)*sin(grad_ind_d);
+            int v_ind_xn = centerX-(radius-n_otstup)*cos(grad_ind_d);
 
-          //Наконечник нижние стрелки  
-          it.filled_triangle(ind_xn, ind_yn, ind_xnl, ind_ynl, ind_xnp, ind_ynp, green);
+            // Нижняя левая точка  нижнего наконечника  вспомогательной стрелки
+            int v_ind_ynl = centerY-(radius - (n_otstup - gstrel))*sin(grad_ind_d - grad_n);
+            int v_ind_xnl = centerX-(radius - (n_otstup - gstrel))*cos(grad_ind_d - grad_n);
+
+            // Нижняя правая точка нижего наконечника  вспомогательной стрелки
+            int v_ind_ynp = centerY-(radius - (n_otstup - gstrel))*sin(grad_ind_d + grad_n);
+            int v_ind_xnp = centerX-(radius - (n_otstup - gstrel))*cos(grad_ind_d + grad_n);
+
+            // Вторая нижняя часть вспомогательной стрелки 
+            it.line(centerX, centerY, v_ind_xn, v_ind_yn, white);
+
+            //Наконечник нижние  вспомогательной стрелки  
+            it.filled_triangle(v_ind_xn, v_ind_yn, v_ind_xnl, v_ind_ynl, v_ind_xnp, v_ind_ynp, white);
+          }
+
+          ///////////////////////////////////////////////////////////////////////////////////    
+          if (id(bme680_p).state > 0) {
+            float grad_ind = ((id(bme680_p).state - zmin) * shag + n_grad) *(PI/180);
+            // Верхняя точка стрелки
+            int ind_y = centerY+(radius - otstup)*sin(grad_ind);
+            int ind_x = centerX+(radius - otstup)*cos(grad_ind);
+
+            // Нижняя точка наконечника стрелки
+            int ind_y2 = centerY+(radius - (otstup + strel))*sin(grad_ind);
+            int ind_x2 = centerX+(radius - (otstup + strel))*cos(grad_ind);
+
+            // Нижняя левая точка наконечника стрелки
+            int ind_yl = centerY+(radius - (otstup + gstrel))*sin(grad_ind - grad_n);
+            int ind_xl = centerX+(radius - (otstup + gstrel))*cos(grad_ind - grad_n);
+
+            // Нижняя правая точка наконечника стрелки
+            int ind_yp = centerY+(radius - (otstup + gstrel))*sin(grad_ind + grad_n);
+            int ind_xp = centerX+(radius - (otstup + gstrel))*cos(grad_ind + grad_n);
+
+            //Наконечник стрелки левая часть
+            it.filled_triangle(ind_x, ind_y, ind_xl, ind_yl, ind_x2, ind_y2, tred);
+
+            //Наконечник стрелки правая часть
+            it.filled_triangle(ind_x, ind_y, ind_xp, ind_yp, ind_x2, ind_y2, tred);
+
+            //Стрелка 
+            it.line(centerX, centerY, ind_x2, ind_y2, tred);
+
+            // Расчет нижней точки второй части стрелки       
+            int ind_yn = centerY-(radius-n_otstup)*sin(grad_ind);
+            int ind_xn = centerX-(radius-n_otstup)*cos(grad_ind);
+
+            // Нижняя левая точка  нижнего наконечника стрелки
+            int ind_ynl = centerY-(radius - (n_otstup - gstrel))*sin(grad_ind - grad_n);
+            int ind_xnl = centerX-(radius - (n_otstup - gstrel))*cos(grad_ind - grad_n);
+
+            // Нижняя правая точка нижего наконечника стрелки
+            int ind_ynp = centerY-(radius - (n_otstup - gstrel))*sin(grad_ind + grad_n);
+            int ind_xnp = centerX-(radius - (n_otstup - gstrel))*cos(grad_ind + grad_n);
+
+            // Вторая нижняя часть  стрелки 
+            it.line(centerX, centerY, ind_xn, ind_yn, tred);
+
+            //Наконечник нижние стрелки  
+            it.filled_triangle(ind_xn, ind_yn, ind_xnl, ind_ynl, ind_xnp, ind_ynp, tred);
+          }
 
 interval:
   - interval: 5s
