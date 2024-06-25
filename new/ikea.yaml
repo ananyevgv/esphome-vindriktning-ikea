@@ -35,16 +35,13 @@ packages:
   wifi: !include included/wifi.yaml
   device_base: !include included/device_base.yaml
   sun: !include included/sun.yaml
- # time: !include included/time.yaml
   web: !include included/web.yaml
   esp32_hall: !include included/esp32_hall.yaml
   esp32_temp: !include included/esp32_temp.yaml
- # qmc5883l: !include included/qmc5883l.yaml
   bme680_bsec: !include included/bme680_bsec.yaml
   pm1006k: !include included/pm1006k.yaml
   bh1750: !include included/bh1750.yaml
- # ntp_server: !include included/ntp_server.yaml
- # opentherm: !include included/opentherm.yaml
+
 color:
   - id: red
     hex: FF7F7F
