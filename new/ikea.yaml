@@ -1,0 +1,309 @@
+# Вариант без родного контроллера питание (+) 4 ножка (-) 2 ножка контроллера
+########### st7735 ################
+## SDA  GPIO23 D7   VSPI MOSI    ##
+## SCLK GPIO18 D5   VSPI SCK     ##
+## D/C  GPIO5  D8   DC           ##
+## RST  GPIO1  RST  RESET        ##
+## CS   GPIO26 D0   chip select  ##
+## LED  GPIO19 D6                ##
+###################################
+
+#################### WEMOS D1 ESP32 ###############################
+##  |GN|       |RS| reset    |#|     | 1| tuart    |GN|          ##
+##  |NC|       |36|          |#|     | 3| ruart    |27|          ##
+##  |39|       |26| cs       |#|     |22| scl      |25|          ##
+##  |35|       |18| clk      |#|     |21| sda      |32|          ##
+##  |33|       |19| led      |#|     |17| TTP223   |12|          ##
+##  |34|       |23| mosi     |#|     |16| vent     | 4|          ##
+##  |14|       | 5| dc       |#|     |GN|          | 0|          ## 
+##  |NC|       |3V|          |#|     |5V|          | 2|          ##
+##  | 9|       |13|          |#|     |15|          | 8|          ##
+##  |11|       |10|          |#|     | 7|          | 6|          ##
+###################################################################
+
+substitutions:
+  name: ikea
+  device_description: "ikea"
+  telegram_api_token: !secret telegram_bot
+  telegram_chat_id: !secret chat_id_gora_r
+
+
+esp32:
+  board: wemos_d1_mini32
+
+packages:
+  wifi: !include included/wifi.yaml
+  device_base: !include included/device_base.yaml
+  sun: !include included/sun.yaml
+ # time: !include included/time.yaml
+  web: !include included/web.yaml
+  esp32_hall: !include included/esp32_hall.yaml
+  esp32_temp: !include included/esp32_temp.yaml
+ # qmc5883l: !include included/qmc5883l.yaml
+  bme680_bsec: !include included/bme680_bsec.yaml
+  pm1006k: !include included/pm1006k.yaml
+  bh1750: !include included/bh1750.yaml
+ # ntp_server: !include included/ntp_server.yaml
+ # opentherm: !include included/opentherm.yaml
+color:
+  - id: red
+    hex: FF7F7F
+  - id: tred
+    hex: e50000
+
+  - id: yellow
+    red: 100%
+    green: 100%
+    blue: 0%
+
+  - id: lyellow
+    hex: ffa500
+
+  - id: green
+    red: 0%
+    green: 100%
+    blue: 0%
+
+  - id: lgreen
+    red: 70%
+    green: 100%
+    blue: 0% 
+
+  - id: blue
+    red: 0%
+    green: 100%
+    blue: 100%
+
+  - id: white
+    red: 100%
+    green: 100%
+    blue: 100%
+
+  - id: black
+    red: 0%
+    green: 0%
+    blue: 0%  
+image:    
+  - file: "picture/clok-240-300.jpg"
+    id: clok
+    resize: 128x160 
+    type: RGB565 
+   
+  - file: "picture/barometr.jpg"
+    id: barometr
+    resize: 128x160 
+    type: RGB565  
+
+
+animation:
+  - file: "picture/sun-wilao.gif"
+    id: g_sun
+    resize: 20x20
+    type: RGB565
+  - file: "picture/moon-ramadhan.gif"
+    id: g_moon
+    resize: 20x20 
+    type: RGB565
+  - file: "picture/fan.gif"
+    id: g_fan
+    resize: 20x20  
+
+font:
+
+  - file: "font/DSEG7ModernMini-Bold.ttf"
+    id: SEG24
+    size: 24
+  - file: "font/DSEG7ModernMini-Bold.ttf"
+    id: SEG12
+    size: 12
+  - file:
+      type: gfonts
+      family: Roboto
+    id: font11
+    size: 11
+    glyphs: |-
+      !"%()+=,-_.:³°₂μ0123456789АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧЩЬЫЪЭЮЯABCDEFGHIJKLMNOPQRSTUVWXYZ абвгдеёжзийклмнопрстуфхцчщьыъэюяabcdefghijklmnopqrstuvwxyz'éèàòùç/&ôœìïöñ
+  - file:
+      type: gfonts
+      family: Roboto
+    id: font0
+    size: 15
+    glyphs: |-
+      !"%()+=,-_.:³°₂μ0123456789АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧЩЬЫЪЭЮЯABCDEFGHIJKLMNOPQRSTUVWXYZ абвгдеёжзийклмнопрстуфхцчщьыъэюяabcdefghijklmnopqrstuvwxyz'éèàòùç/&ôœìïöñ
+    # gfonts://family[@weight]
+  - file:
+      type: gfonts
+      family: Roboto
+    id: font1
+    size: 20
+  - file:
+      type: gfonts
+      family: Roboto
+      weight: 700
+    id: font2
+    size: 35  
+  - file: 'gfonts://Material+Symbols+Outlined'
+    id: icon_font
+    size: 20
+    glyphs: ["\U0000e846","\U0000e7b0","\U0000f176","\U0000ebdb","\U0000e430","\U0000e2bd","\U0000f87e"] 
+#             термометр     СО           дождь       гроза        солнце                    влажность
+
+i2c:
+   sda: D2 #GPIO21
+   scl: D1 #GPIO22
+   scan: true
+
+spi:
+  clk_pin: D5 #GPIO18
+  mosi_pin: D7 #GPIO23
+
+binary_sensor:
+  - platform: template
+    name: "vent"
+    id: vent_bin
+    internal: true
+
+  - platform: gpio
+    pin: 17
+    name: "LCD backlight on/off"
+    device_class: light
+    on_press:
+      then:
+        - light.turn_on: lcd
+        - delay: 30s # время работы экрана
+        - light.turn_off: lcd        
+
+
+sensor:
+  - platform: copy # Pressure 1h
+    source_id: bme680_p
+    name: "${name} pressure 1h"
+    id: pressure_1h
+    filters:
+      - median:
+          window_size: 180 #1441
+          send_every: 5 #1440
+          send_first_at: 1
+
+  - platform: template
+    name: "${name} brightness"
+    id: brightness
+    update_interval: 20s
+    internal: true
+    lambda: |-
+      uint16_t brig = (id(Illuminance).state) *10;
+      switch (brig) {
+        case 0 ... 1: return 7; break;
+        case 2 ... 4: return 8; break;
+        case 5 ...7: return 9; break;
+        case 8 ... 10: return 10; break;
+        default: return 10; break;
+      }
+    on_value:
+      then:
+        - light.turn_on:
+            id: lcd
+            brightness: !lambda |-
+              return id(brightness).state / 10.0; 
+         
+fan:
+  - platform: speed
+    output: vent
+    name: "vent"
+    id: pmvent
+    speed_count: 10 # Количество скоростеей вентилятора
+    on_turn_on:
+      lambda: |-
+        id(vent_bin).publish_state(true);
+    on_turn_off:
+      lambda: |-
+        id(vent_bin).publish_state(false); 
+light:
+ # - platform: monochromatic
+  #  name: "vent"
+ #   output: vent
+   # id: pmvent
+   # icon: "mdi:fan"
+ #   internal: true
+
+  - platform: monochromatic
+    name: "light_LCD"
+    id: lcd
+    output: light_LCD
+    icon: mdi:television-ambient-light
+ #   internal: true
+# Example output entry
+output:
+  - platform: esp32_dac
+    id: vent
+    pin: GPIO25 # D4 #GPIO16 #5 ножка контроллера
+  - platform: ledc
+    pin: D6 #GPIO19
+    id: light_LCD  
+    inverted: false
+      
+display:
+  - platform: st7735
+    model: "INITR_18BLACKTAB"
+    reset_pin: GPIO0
+    cs_pin: D0 #GPIO26
+    dc_pin: D8 #GPIO5
+    rotation: 0
+    device_width: 128
+    device_height: 160
+    col_start: 0
+    row_start: 0
+    eight_bit_color: true
+    update_interval: 1s
+    id: my_display
+    pages:
+# Первая страница дисплея выводим качество воздуха, давление, цифровые часы, значок работы вентилятора,
+# индикатор сонца над горизонтом, содержание пыли PM1 (не нормируется)
+      - !include included/ikea_page1.yaml
+# Вторая страница дисплея выводим температуру, влажность, цифровые часы, значок работы вентилятора,
+# индикатор сонца над горизонтом, содержание пыли PM2.5 цвет изменяется в зависимости от уровня (нормируется)
+      - !include included/ikea_page2.yaml
+# Третья страница дисплея выводим содержание органических вешеств, углекислый газ, цифровые часы, значок работы вентилятора,
+# индикатор сонца над горизонтом, содержание пыли PM10 цвет изменяется в зависимости от уровня (нормируется)    
+      - !include included/ikea_page3.yaml
+# Четвертая страница дисплея выводим значок работы вентилятора,индикатор сонца над горизонтом, стрелочные часы
+      - !include included/ikea_page4.yaml
+# Пятая страница дисплея выводим барометр
+      - !include included/ikea_page5.yaml
+interval:
+  - interval: 5s
+    then:
+      - display.page.show_next: my_display
+      - component.update: my_display 
+
+time:
+  - platform: sntp
+    id: sntp_time
+    servers:
+     - 0.pool.ntp.org
+     
+    on_time: 
+# Время включения вентилятора      
+      - seconds: 0
+        then:
+          - fan.turn_on:
+              id: pmvent
+              speed: 7 # скорость вентилятора 70%
+# изменение скорости врашения              
+           #   brightness: !lambda |-
+           #     return id(brightness).state / 10.0;   
+  # - output.set_level:
+   #     id: dac_output
+   #     level: 50%
+
+# Время запроса данных pm1006k                       
+#      - seconds: 30
+#        then:
+#          - uart.write:
+#              id: PM1006
+#              data: [0x11, 0x02, 0x0B, 0x01, 0xE1]
+# Время выключения вентилятора                  
+      - seconds: 32
+        then:
+          - fan.turn_off:
+              id: pmvent
