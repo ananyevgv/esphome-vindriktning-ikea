@@ -1,0 +1,171 @@
+        id: page3
+        lambda: |- 
+          it.line(0,35,30,35, white);
+          it.line(98,35,128,35, white);
+          it.line(64,0,64,25, white);
+          it.print(0, 22, id(font11), white, "VOC");
+          it.print(92, 22, id(font11), white, "CO2");
+          
+          it.line(0,130,22,130, white);          
+          it.line(102,130,128,130, white); 
+
+          // цифровые часы
+          it.strftime(25, 136, id(SEG24), lyellow,"%H %M", id(sntp_time).now());
+          static int i = 0;
+          i++;
+          if ((i % 2) == 0) 
+            it.print(65, 136, id(SEG24),lyellow,":");
+          it.print(0, 131, id(font11), lyellow, "TIME");
+
+          // углекислый газ
+          it.printf(70,0, id(SEG24), blue, "%3.0f", id(bme680_co2).state);
+
+          // органические вешества
+          it.printf(0, 0, id(SEG24), green, "%3.0f", id(bme680_voc).state);
+
+          // оформление центра
+          it.printf(64, 80, id(SEG24), white, TextAlign::CENTER, "%.0f", id(pm10).state);
+          it.print(64, 105, id(font11), white, TextAlign::CENTER, "ppm");
+          it.print(64, 130, id(font11), white, TextAlign::CENTER, "PM10");
+
+          // Индикатор сонца над горизонтом
+          if ((id(elevation).state) > 0) {
+            id(g_sun).next_frame();
+            it.image(110, 140, id(g_sun), yellow);
+            }
+          else {
+            it.image(110, 140, id(g_moon), white);
+            id(g_moon).next_frame();
+            }
+          // Состояние вентилятора
+          if (id(vent_bin).state) {
+            it.image(0, 140, id(g_fan));
+            id(g_fan).next_frame();
+          }
+          
+          // Размеры
+          int centerX = 64; 
+          int centerY = 85; 
+          int radius = 60;
+          int zradius = 55;
+          int vradius = 46;
+          int mradius = 40;
+          int width = 3;
+
+          // Большой белый
+          //PI / 180 = 0.0174533
+          for (int grad = 130; grad <= 175; grad++) {
+            float radian = grad * 0.0174533;
+            it.draw_pixel_at(centerX+radius*cos(radian), centerY+radius*sin(radian), white);
+          }
+          for (int grad = 185; grad <= 260; grad++) {
+            float radian = grad * 0.0174533;
+            it.draw_pixel_at(centerX+radius*cos(radian), centerY+radius*sin(radian), white);
+          }
+          for (int grad = 280; grad <= 355; grad++) {
+            float radian = grad * 0.0174533;
+            it.draw_pixel_at(centerX+radius*cos(radian), centerY+radius*sin(radian), white);
+          }
+          for (int grad = 365; grad <= 410; grad++) {
+            float radian = grad * 0.0174533;
+            it.draw_pixel_at(centerX+radius*cos(radian), centerY+radius*sin(radian), white);
+          }
+
+          // Малый белый
+          for (int grad = 135; grad <= 405; grad++) {
+            float radian = grad * 0.0174533;
+            it.draw_pixel_at(centerX+mradius*cos(radian), centerY+mradius*sin(radian), white);
+          }
+          for (int grad = 60; grad <= 120; grad++) {
+            //PI / 180 = 0.0174533 
+            float radian = grad * 0.0174533;
+            it.draw_pixel_at(centerX+mradius*cos(radian), centerY+mradius*sin(radian), white);
+          }
+
+
+          // Цветное сопровождение значение/2+135 (начало)
+          for (int grad = 135; grad <= 160; grad++) {
+            float radian = grad * 0.0174533;
+            it.filled_circle(centerX+vradius*cos(radian), centerY+vradius*sin(radian), width,  green);
+          }  
+          for (int grad = 161; grad <= 185; grad++) {
+            float radian = grad * 0.0174533;
+            it.filled_circle(centerX+vradius*cos(radian), centerY+vradius*sin(radian), width,  lgreen);
+          }  
+          for (int grad = 186; grad <= 260; grad++) {
+            float radian = grad * 0.0174533;
+            it.filled_circle(centerX+vradius*cos(radian), centerY+vradius*sin(radian), width,  yellow);
+          } 
+          for (int grad = 261; grad <= 310; grad++) {
+            float radian = grad * 0.0174533;
+            it.filled_circle(centerX+vradius*cos(radian), centerY+vradius*sin(radian), width,  lyellow);
+          } 
+          for (int grad = 310; grad <= 350; grad++) {
+            float radian = grad * 0.0174533;
+            it.filled_circle(centerX+vradius*cos(radian), centerY+vradius*sin(radian), width,  red);
+          } 
+          for (int grad = 351; grad <= 410; grad++) {
+            float radian = grad * 0.0174533;
+            it.filled_circle(centerX+vradius*cos(radian), centerY+vradius*sin(radian), width,  tred);
+          } 
+
+          // Значения PM10 значение/2+135 (начало)
+          uint16_t vpm10 = (id(pm10).state);
+          switch (vpm10) {
+            case 0 ... 50:
+              if (id(pm10).state); {
+                for (int grad = 135; grad <= id(pm10).state *0.5 + 135; grad++) {
+                  float radian = grad * 0.0174533;
+                  it.filled_circle(centerX+zradius*cos(radian), centerY+zradius*sin(radian), width, green);
+                }  
+              }
+              break;
+            case 51 ... 100:
+              if (id(pm10).state); {
+                for (int grad = 135; grad <= id(pm10).state *0.5 + 135; grad++) {
+                  float radian = grad * 0.0174533;
+                  it.filled_circle(centerX+zradius*cos(radian), centerY+zradius*sin(radian), width, lgreen);
+                }  
+              }
+              break;
+            case 101 ... 250: 
+              if (id(pm10).state); {
+                for (int grad = 135; grad <= id(pm10).state *0.5 + 135; grad++){
+                  float radian = grad * 0.0174533;
+                  it.filled_circle(centerX+zradius*cos(radian), centerY+zradius*sin(radian), width, yellow);
+                }  
+              }
+              break;
+            case 251 ... 350: 
+              if (id(pm10).state); {
+                for (int grad = 135; grad <= id(pm10).state *0.5 + 135; grad++) {
+                  float radian = grad * 0.0174533;
+                  it.filled_circle(centerX+zradius*cos(radian), centerY+zradius*sin(radian), width, lyellow);
+                }  
+              }
+              break;
+            case 351 ... 430: 
+              if (id(pm10).state); {
+                for (int grad = 135; grad <= id(pm10).state *0.5 + 135; grad++) {
+                  float radian = grad * 0.0174533;
+                  it.filled_circle(centerX+zradius*cos(radian), centerY+zradius*sin(radian), width, red);
+                }  
+              }
+              break;
+            case 431 ... 1000:
+              if (id(pm10).state); {
+                for (int grad = 135; grad <= id(pm10).state *0.5 + 135; grad++) {
+                  float radian = grad * 0.0174533;
+                  it.filled_circle(centerX+zradius*cos(radian), centerY+zradius*sin(radian), width, tred);
+                }  
+              }
+              break;
+            default: 
+              if (id(pm10).state); {
+                for (int grad = 135; grad <= id(pm10).state *0.5 + 135; grad++) {
+                  float radian = grad * 0.0174533;
+                  it.filled_circle(centerX+zradius*cos(radian), centerY+zradius*sin(radian), width, blue);
+                }  
+              }
+              break;              
+          }

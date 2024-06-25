@@ -1,0 +1,26 @@
+esphome:
+  name: "${name}"
+  comment: "${device_description}"
+  
+# Enable logging
+logger:
+   baud_rate: 0
+
+# Enable Home Assistant API бля
+api:
+  password: !secret api_pass
+#Включаем загрузку по воздуху
+ota:
+  password: !secret ota_pass
+  platform: esphome
+
+binary_sensor:
+  - platform: status
+    name: "${name} API HA"
+    id: system_status  
+    
+button:
+  - platform: restart
+    name: "${name} Restart"
+    
+
