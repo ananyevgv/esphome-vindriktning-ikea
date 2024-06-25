@@ -1,0 +1,38 @@
+esphome:
+  on_boot:
+    priority: 240
+    then:
+      - uart.write:
+          id: PM1006
+          data: [0x11, 0x02, 0x0B, 0x01, 0xE1]
+      - light.turn_on: lcd
+
+uart:
+  tx_pin: 3 #1 ножка контроллера
+  rx_pin: 1 #8 ножка контроллера
+  baud_rate: 9600
+  id: PM1006
+  
+external_components:
+  #    type: local
+  #    path: my_components
+ #   components: [ pm1006k ]
+  - source: github://ananyevgv/esphome-components
+    components: [pm1006k]
+    refresh: 0s
+ # - source: github://pr#6381
+ #   components: [ display, font ]
+
+sensor:
+  - platform: pm1006k
+    pm_1_0:   
+      name: "PM 1.0"
+      id: "pm1"
+    pm_2_5:
+      name: "PM 2.5"
+      id: "pm2"
+    pm_10_0:
+      name: "PM 10"
+      id: "pm10"
+      unit_of_measurement: µg/m³
+    update_interval: 30s

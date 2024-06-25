@@ -1,0 +1,4 @@
+sensor:
+  - platform: esp32_hall
+    name: "${name} hall Sensor"
+    update_interval: 60s
