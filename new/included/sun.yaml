@@ -1,0 +1,20 @@
+sun:
+  latitude: !secret latitude
+  longitude: !secret longitude
+  
+sensor:
+  - platform: sun
+    name: "${name} Elevation" 
+    type: elevation
+    id: elevation  
+  - platform: sun
+    name: "${name} Sun Azimuth" 
+    type: azimuth
+
+text_sensor:
+  - platform: sun
+    name: "${name} Sun Next Sunrise"
+    type: sunrise
+  - platform: sun
+    name: "${name} Sun Next Sunset"
+    type: sunset
