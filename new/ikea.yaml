@@ -31,9 +31,9 @@ esphome:
   on_boot:
     - delay: 5s
     - lambda: !lambda |-
-        id(pressure_3h).publish_state(id(bme680_p).state * 0.75);
-        id(pressure_2h).publish_state(id(bme680_p).state * 0.75);
-        id(pressure_1h).publish_state(id(bme680_p).state * 0.75);
+        id(pressure_3h).publish_state(id(bme680_p).state);
+        id(pressure_2h).publish_state(id(bme680_p).state);
+        id(pressure_1h).publish_state(id(bme680_p).state);
         
 esp32:
   board: wemos_d1_mini32
@@ -327,4 +327,4 @@ time:
           lambda: !lambda |-
             id(pressure_3h).publish_state(id(pressure_2h).state);
             id(pressure_2h).publish_state(id(pressure_1h).state);
-            id(pressure_1h).publish_state(id(bme680_p).state * 0.75);
+            id(pressure_1h).publish_state(id(bme680_p).state);
