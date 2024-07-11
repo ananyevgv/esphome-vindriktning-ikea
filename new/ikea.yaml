@@ -27,7 +27,14 @@ substitutions:
   telegram_api_token: !secret telegram_bot
   telegram_chat_id: !secret chat_id_gora_r
 
-
+esphome:
+  on_boot:
+    - delay: 5s
+    - lambda: !lambda |-
+        id(pressure_3h).publish_state(id(bme680_p).state * 0.75);
+        id(pressure_2h).publish_state(id(bme680_p).state * 0.75);
+        id(pressure_1h).publish_state(id(bme680_p).state * 0.75);
+        
 esp32:
   board: wemos_d1_mini32
 
@@ -172,15 +179,23 @@ binary_sensor:
 
 
 sensor:
-  - platform: copy # Pressure 1h
-    source_id: bme680_p
-    name: "${name} pressure 1h"
+  - platform: template # Pressure 1h
+    name: "${name} pressure old 1h"
     id: pressure_1h
-    filters:
-      - median:
-          window_size: 180 #1441
-          send_every: 5 #1440
-          send_first_at: 1
+    update_interval: never
+    device_class: pressure
+
+  - platform: template # Pressure 2h
+    name: "${name} pressure old 2h"
+    id: pressure_2h
+    update_interval: never
+    device_class: pressure
+
+  - platform: template # Pressure 3h
+    name: "${name} pressure old 3h"
+    id: pressure_3h
+    update_interval: never
+    device_class: pressure
 
   - platform: template
     name: "${name} brightness"
@@ -304,3 +319,12 @@ time:
         then:
           - fan.turn_off:
               id: pmvent
+              
+      - hours: '*'
+        minutes: 50
+        seconds: 0
+        then:
+          lambda: !lambda |-
+            id(pressure_3h).publish_state(id(pressure_2h).state);
+            id(pressure_2h).publish_state(id(pressure_1h).state);
+            id(pressure_1h).publish_state(id(bme680_p).state * 0.75);
