@@ -28,17 +28,17 @@
           float grad_n = nak_grad * (PI / 180);
 
           ///////////////////////////////////////////////////////////////////////////////////
-          if (id(pressure_1h).state != id(bme680_p).state) {
+          if (id(pressure_3h).state != id(bme680_p).state) {
 
             float pressure_kor =0;
-            if (id(pressure_1h).state > id(bme680_p).state) {
+            if (id(pressure_3h).state > id(bme680_p).state) {
               pressure_kor = 10; 
             }
             else {
               pressure_kor = -10; 
             }
 
-            float grad_ind_d = (n_grad + (id(pressure_1h).state - zmin + pressure_kor)*shag) *(PI / 180);
+            float grad_ind_d = (n_grad + (id(pressure_3h).state - zmin + pressure_kor)*shag) *(PI / 180);
 
             // Верхняя точка вспомогательной стрелки
             int v_ind_y = centerY+(radius - otstup)*sin(grad_ind_d);
