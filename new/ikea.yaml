@@ -184,18 +184,21 @@ sensor:
     id: pressure_1h
     update_interval: never
     device_class: pressure
+    unit_of_measurement: mmHg
 
   - platform: template # Pressure 2h
     name: "${name} pressure old 2h"
     id: pressure_2h
     update_interval: never
     device_class: pressure
+    unit_of_measurement: mmHg
 
   - platform: template # Pressure 3h
     name: "${name} pressure old 3h"
     id: pressure_3h
     update_interval: never
     device_class: pressure
+    unit_of_measurement: mmHg
 
   - platform: template
     name: "${name} brightness"
