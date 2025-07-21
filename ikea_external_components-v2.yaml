@@ -292,9 +292,6 @@ text_sensor:
 sensor:
   - platform: internal_temperature
     name: "${name} ESP32 T"
-  - platform: esp32_hall
-    name: "${name} hall Sensor"
-    update_interval: 60s
 
   - platform: wifi_signal
     name: "${name} Wifi"
