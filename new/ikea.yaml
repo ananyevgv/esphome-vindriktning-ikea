@@ -43,7 +43,6 @@ packages:
   device_base: !include included/device_base.yaml
   sun: !include included/sun.yaml
   web: !include included/web.yaml
-  esp32_hall: !include included/esp32_hall.yaml
   esp32_temp: !include included/esp32_temp.yaml
   bme680_bsec: !include included/bme680_bsec.yaml
   pm1006k: !include included/pm1006k.yaml
