@@ -1,7 +1,7 @@
 # esphome-vindriktning-ikea
 | 1                                                    | 2                                                   | 
 |------------------------------------------------------|-----------------------------------------------------|
-| ![1](https://github.com/ananyevgv/esphome-vindriktning-ikea/blob/main/1704567361805.jpg) | ![2](https://github.com/ananyevgv/esphome-vindriktning-ikea/blob/main/1704567697413.jpg) |
+| ![1](./1704567361805.jpg) | ![2](./1704567697413.jpg) |
 
 Мой вариант vindriktning-ikea основан на https://modkam.ru/2023/10/30/ikea-vindriktning/ 
 с небольшими  доработками, убран родной контроллер, добавлен датчик bme680, добавлено управление вентилятором и яркостью дисплея, измение цвета показаний в зависимости от значений, индикация солнца над горизонтом, индикация ожидаемой погоды в зависимости от давления + ESPHome component PM1006k.
@@ -38,10 +38,10 @@ https://www.wemos.cc/en/latest/d1_mini_shield/tft_i2c_connector.html
 |scl|scl|
 |sda|sda|
 
-# [display_v2.yaml](https://github.com/ananyevgv/esphome-vindriktning-ikea/blob/main/ikea_external_components-v2.yaml)
-<img src="https://github.com/ananyevgv/esphome-vindriktning-ikea/blob/main/v2.jpg" height="300" alt="v2">
+# [display_v2.yaml](./ikea_external_components-v2.yaml)
+<img src="./v2.jpg" height="300" alt="v2">
 
-# [display_v3.yaml](https://github.com/ananyevgv/esphome-vindriktning-ikea/blob/main/ikea-circle-new.yaml)
+# [display_v3.yaml](./ikea-circle-new.yaml)
 <img src="https://github.com/ananyevgv/esphome-vindriktning-ikea/blob/main/ikeaV3.jpg" height="300" alt="board">
 
 # ESPHome component PM1006k с родным контроллером
