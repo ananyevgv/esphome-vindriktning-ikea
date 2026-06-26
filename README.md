@@ -11,7 +11,7 @@
 
 | Версия 1 | Версия 2 | Версия 3 |
 |----------|----------|----------|
-| <img src="./1704567361805.jpg" width="300"> | <img src="./1704567697413.jpg" width="300"> | <img src="./ikeaV3.jpg" width="300"> |
+| <img src="./1704567361805.jpg" width="300"> | <img src="./v2.jpg" width="300"> | <img src="./ikeaV3.jpg" width="300"> |
 
 ---
 
