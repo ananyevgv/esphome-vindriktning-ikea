@@ -39,12 +39,22 @@ esp32:
   board: wemos_d1_mini32
 
 packages:
-  wifi: !include included/wifi.yaml
-  device_base: !include included/device_base.yaml
+  wifi: !include packages/wifi.yaml
+  device_base: !include packages/device_base.yaml
   sun: !include included/sun.yaml
-  web: !include included/web.yaml
+  web: !include packages/web.yaml
   esp32_temp: !include included/esp32_temp.yaml
-  bme680_bsec: !include included/bme680_bsec.yaml
+  bme680_bsec: !include 
+    file: packages/sensor/bme680_bsec2.yaml
+    vars:
+      id_bme680_t: bme680_t
+      id_bme680_h: bme680_h
+      id_bme680_p: bme680_p
+      id_bme680_iaq: bme680_iaq
+      id_bme680_co2: bme680_co2
+      id_bme680_voc: bme680_voc
+      model_bme: bme688
+      address_bme680: 0x76
   pm1006k: !include included/pm1006k.yaml
   bh1750: !include included/bh1750.yaml
 
@@ -86,13 +96,14 @@ color:
     red: 0%
     green: 0%
     blue: 0%  
-image:    
-  - file: "picture/clok-240-300.jpg"
+image:
+  - platform: file 
+    file: "picture/clok-240-300.jpg"
     id: clok
     resize: 128x160 
     type: RGB565 
-   
-  - file: "picture/barometr.jpg"
+  - platform: file
+    file: "picture/barometr.jpg"
     id: barometr
     resize: 128x160 
     type: RGB565  
