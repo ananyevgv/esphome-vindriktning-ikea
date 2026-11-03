@@ -1,12 +1,27 @@
+#-------------------------------------------
+# Add yaml 
+#packages:
+#  wifi: !include packages/wifi.yaml
+# and copy file esphome/packages/
+#-------------------------------------------
+#-------------------------------------------
+# WIFI
+#-------------------------------------------
 wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_password
+  
+#-------------------------------------------
+# SENSOR
+#-------------------------------------------
 sensor:
   - platform: wifi_signal
     name: "${name} Wifi"
     update_interval: 60s  
     id: wifi_signal_db
     entity_category: "diagnostic"
+    icon: mdi:wifi
+    
   - platform: copy # Reports the WiFi signal strength in %
     source_id: wifi_signal_db
     name: "${name} WiFi Percent"
@@ -14,8 +29,11 @@ sensor:
       - lambda: return min(max(2 * (x + 100.0), 0.0), 100.0);
     unit_of_measurement: "%"
     entity_category: "diagnostic"
-    id: WiFiP
-    
+    id: wifi_signal_percent
+    icon: mdi:wifi
+#-------------------------------------------
+# TEXT SENSOR
+#------------------------------------------- 
 text_sensor:
   - platform: wifi_info
     ip_address:
