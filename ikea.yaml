@@ -277,7 +277,7 @@ display:
     cs_pin: D0 #GPIO26
     dc_pin: D8 #GPIO5
     reset_pin: GPIO0
-    rotation: 0
+    rotation: 180
     dimensions:
       width: 128
       height: 160
