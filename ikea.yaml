@@ -132,6 +132,9 @@ font:
     id: SEG24
     size: 24
   - file: "font/DSEG7ModernMini-Bold.ttf"
+    id: SEG16
+    size: 16
+  - file: "font/DSEG7ModernMini-Bold.ttf"
     id: SEG12
     size: 12
   - file:
