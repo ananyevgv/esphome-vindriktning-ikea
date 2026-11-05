@@ -47,6 +47,9 @@ sensor:
     pressure:
       name: "${name} Pressure"
       id: ${id_bme680_p}
+      unit_of_measurement: "мм рт. ст."
+      filters:
+        - multiply: 0.750061683
     humidity:
       name: "${name} Humidity"
       id: ${id_bme680_h}
