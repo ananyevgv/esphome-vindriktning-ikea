@@ -20,16 +20,15 @@
           it.print(0, 131, id(font11), lyellow, "TIME");
 
           // давление
-          // давление — цвет по значению
+          // давление — цвет по прогнозу (низкое → дождь → синий, высокое → ясно → зелёный/жёлтый)
           Color press_color = white;
           switch ((int)id(bme680_p).state) {
-            case 0 ... 729:   press_color = tred;    break;
-            case 730 ... 745: press_color = red;     break;
-            case 746 ... 755: press_color = yellow;  break;
-            case 756 ... 765: press_color = green;   break;
-            case 766 ... 775: press_color = lyellow; break;
-            case 776 ... 785: press_color = red;     break;
-            default:          press_color = tred;    break;
+            case 0 ... 729:   press_color = blue;    break;  // шторм — голубой
+            case 730 ... 745: press_color = lblue;   break;  // дождь — светло-синий
+            case 746 ... 755: press_color = yellow;  break;  // переменно
+            case 756 ... 765: press_color = green;   break;  // норма
+            case 766 ... 775: press_color = lgreen;  break;  // ясно
+            default:          press_color = lyellow; break;  // устойчиво ясно
           }
           it.printf(70,0, id(SEG24), press_color, "%3.0f", id(bme680_p).state);
 
