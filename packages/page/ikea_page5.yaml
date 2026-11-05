@@ -1,12 +1,39 @@
         id: page5
         lambda: |-
-          it.image(0, 20, id(barometr)); 
 
-          it.printf (64, 180, id(SEG24), lyellow, TextAlign::CENTER, "%.0f", id(bme680_p).state);
+          // Цыфровые часы
+          auto now = id(sntp_time).now();    
+          int sec = now.second;  
+          if (sec % 2)
+            it.strftime(25, 136, id(SEG24), lyellow,"%H:%M", now);
+          else
+            it.strftime(25, 136, id(SEG24), lyellow,"%H %M", now);
+
+          it.print(0, 131, id(font11), lyellow, "TIME");
+
+          // Индикатор сонца над горизонтом
+          if ((id(elevation).state) > 0) {
+            id(g_sun).next_frame();
+            it.image(110, 140, id(g_sun), yellow);
+            }
+          else {
+            it.image(110, 140, id(g_moon), white);
+            id(g_moon).next_frame();
+            }
+          // Состояние вентилятора
+          if (id(vent_bin).state) {
+            it.image(0, 140, id(g_fan));
+            id(g_fan).next_frame();
+          }
+
+          // Барометр
+          it.image(0, 0, id(barometr)); 
+
+          // it.printf (64, 160, id(SEG24), lyellow, TextAlign::CENTER, "%.0f", id(bme680_p).state);
 
           // Центр, радиус, верхний отступ стрелки, наконечник стрелки, грань наконечника стрелки, угол отклонения наконечника от стрелки 
           int centerX = 64; 
-          int centerY = 86; 
+          int centerY = 66; 
           int radius = 64;
           int otstup = 10;
           int n_otstup = 50;

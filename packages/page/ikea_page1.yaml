@@ -22,8 +22,14 @@
           // давление
           it.printf(70,0, id(SEG24), blue, "%3.0f", id(bme680_p).state);
 
-          // качество воздуха
-          it.printf(0, 0, id(SEG24), green, "%3.0f", id(bme680_iaq).state);
+          // IAQ
+          if (id(bme680_iaq).state >= 1000) {
+            it.printf(0, 0, id(SEG16), green, TextAlign::TOP_LEFT, "%.0f", id(bme680_iaq).state);
+          } else {
+            it.printf(0, 0, id(SEG24), green, "%3.0f", id(bme680_iaq).state);
+          }
+
+          // it.printf(0, 0, id(SEG24), green, "%3.0f", id(bme680_iaq).state);
 
           //оформление центра
           it.printf(64, 80, id(SEG24), white, TextAlign::CENTER, "%.0f", id(pm1).state);
