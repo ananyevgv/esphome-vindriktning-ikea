@@ -113,16 +113,19 @@ image:
     id: g_sun
     resize: 20x20
     type: RGB565
+    transparency: alpha_channel
   - platform: animation
     file: picture/moon-ramadhan.gif
     id: g_moon
     resize: 20x20
     type: RGB565
+    transparency: alpha_channel
   - platform: animation
     file: picture/fan.gif
     id: g_fan
     resize: 20x20
     type: BINARY
+    invert_alpha: true
     
 font:
   - file: "font/DSEG7ModernMini-Bold.ttf"
