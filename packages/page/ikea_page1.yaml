@@ -10,11 +10,13 @@
           it.line(102,130,128,130, white); 
           
           // Цыфровые часы
-          it.strftime(25, 136, id(SEG24), lyellow,"%H %M", id(sntp_time).now());
-          static int i = 0;
-          i++;
-          if ((i % 2) == 0) 
-            it.print(65, 136, id(SEG24),lyellow,":");
+          auto now = id(sntp_time).now();    
+          int sec = now.second;  
+          if (sec % 2)
+            it.strftime(25, 136, id(SEG24), lyellow,"%H:%M", now);
+          else
+            it.strftime(25, 136, id(SEG24), lyellow,"%H %M", now);
+
           it.print(0, 131, id(font11), lyellow, "TIME");
 
           // давление
