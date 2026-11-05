@@ -95,6 +95,7 @@ color:
     red: 0%
     green: 0%
     blue: 0%  
+    
 image:
   - platform: file 
     file: "picture/clok-240-300.jpg"
@@ -121,10 +122,9 @@ image:
     file: picture/fan.gif
     id: g_fan
     resize: 20x20
-    type: RGB565
+    type: BINARY
     
 font:
-
   - file: "font/DSEG7ModernMini-Bold.ttf"
     id: SEG24
     size: 24
@@ -180,7 +180,7 @@ binary_sensor:
 
   - platform: gpio
     pin: 17
-    name: "LCD backlight on/off"
+    name: "LCD backlight"
     device_class: light
     on_press:
       then:
@@ -231,7 +231,7 @@ sensor:
             id: lcd
             brightness: !lambda |-
               return id(brightness).state / 10.0; 
-         
+  
 fan:
   - platform: speed
     output: vent
@@ -244,6 +244,7 @@ fan:
     on_turn_off:
       lambda: |-
         id(vent_bin).publish_state(false); 
+        
 light:
  # - platform: monochromatic
   #  name: "vent"
@@ -259,6 +260,7 @@ light:
     icon: mdi:television-ambient-light
  #   internal: true
 # Example output entry
+
 output:
   - platform: esp32_dac
     id: vent
@@ -269,19 +271,20 @@ output:
     inverted: false
       
 display:
-  - platform: st7735
-    model: "INITR_18BLACKTAB"
-    reset_pin: GPIO0
+  - platform: mipi_spi
+    id: my_display
+    model: ST7735
     cs_pin: D0 #GPIO26
     dc_pin: D8 #GPIO5
+    reset_pin: GPIO0
     rotation: 0
-    device_width: 128
-    device_height: 160
-    col_start: 0
-    row_start: 0
-    eight_bit_color: true
+    dimensions:
+      width: 128
+      height: 160
+      offset_width: 0
+      offset_height: 0
+    # mipi_spi не поддерживает eight_bit_color, по умолчанию используется 16-битный цвет (RGB565)
     update_interval: 1s
-    id: my_display
     pages:
 # Первая страница дисплея выводим качество воздуха, давление, цифровые часы, значок работы вентилятора,
 # индикатор сонца над горизонтом, содержание пыли PM1 (не нормируется)
