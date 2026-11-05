@@ -85,7 +85,12 @@ color:
     red: 0%
     green: 100%
     blue: 100%
-
+    
+  - id: lblue
+    red: 50%
+    green: 70%
+    blue: 100% 
+    
   - id: white
     red: 100%
     green: 100%
