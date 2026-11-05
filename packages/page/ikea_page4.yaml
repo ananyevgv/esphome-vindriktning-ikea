@@ -33,6 +33,7 @@
           uint8_t dm = timeY.minute;
 
           // Расчет верхней точки часовой стрелки (30 градусов на 1 час  (360/12)) с учетом минут
+          const float PI = 3.14159265358979323846f;
           float hsmv = (dh*30 + dm/2-90)* PI / 180;
           int hy = centerY+(radius-h_otstup)*sin(hsmv);
           int hx = centerX+(radius-h_otstup)*cos(hsmv);

@@ -88,11 +88,9 @@
             it.filled_circle(centerX+vradius*cos(radian), centerY+vradius*sin(radian), width, blue);
           }  
           // Значение PM1   
-          if (id(pm1).state); {
-            int zpm1 = 135;
-            zpm1 = (id(pm1).state * 0.125 + 135);
+          if (id(pm1).state > 0) {
             for (int grad = 135; grad <= (id(pm1).state * 0.125 + 135); grad++) {
               float radian = grad * 0.0174533;
               it.filled_circle(centerX+zradius*cos(radian), centerY+zradius*sin(radian), width, green);
             }  
-          }  
+          }

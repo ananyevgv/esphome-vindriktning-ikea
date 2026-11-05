@@ -23,7 +23,7 @@
           // 360+45 градусов
           int k_grad = 405;
           // расчет цены деления, расчет угла по показаниям датчика
-
+          const float PI = 3.14159265358979323846f;
           float shag =  (k_grad-n_grad) / (zmax - zmin);
           float grad_n = nak_grad * (PI / 180);
 
