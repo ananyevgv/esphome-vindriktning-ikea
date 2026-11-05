@@ -20,16 +20,38 @@
           it.print(0, 131, id(font11), lyellow, "TIME");
 
           // давление
-          it.printf(70,0, id(SEG24), blue, "%3.0f", id(bme680_p).state);
+          // давление — цвет по значению
+          Color press_color = white;
+          switch ((int)id(bme680_p).state) {
+            case 0 ... 729:   press_color = tred;    break;
+            case 730 ... 745: press_color = red;     break;
+            case 746 ... 755: press_color = yellow;  break;
+            case 756 ... 765: press_color = green;   break;
+            case 766 ... 775: press_color = lyellow; break;
+            case 776 ... 785: press_color = red;     break;
+            default:          press_color = tred;    break;
+          }
+          it.printf(70,0, id(SEG24), press_color, "%3.0f", id(bme680_p).state);
 
           // IAQ
-          if (id(bme680_iaq).state >= 1000) {
-            it.printf(0, 0, id(SEG16), green, TextAlign::TOP_LEFT, "%.0f", id(bme680_iaq).state);
-          } else {
-            it.printf(0, 0, id(SEG24), green, "%3.0f", id(bme680_iaq).state);
+          // IAQ — цвет по значению
+          Color iaq_color = white;
+          switch ((int)id(bme680_iaq).state) {
+            case 0 ... 50:    iaq_color = green;   break;
+            case 51 ... 100:  iaq_color = lgreen;  break;
+            case 101 ... 150: iaq_color = yellow;  break;
+            case 151 ... 200: iaq_color = lyellow; break;
+            case 201 ... 300: iaq_color = red;     break;
+            default:          iaq_color = tred;    break;
           }
 
-          // it.printf(0, 0, id(SEG24), green, "%3.0f", id(bme680_iaq).state);
+          if (id(bme680_iaq).state >= 1000) {
+            it.printf(0, 0, id(SEG16), iaq_color, TextAlign::TOP_LEFT, "%.0f", id(bme680_iaq).state);
+          } else {
+            it.printf(0, 0, id(SEG24), iaq_color, "%3.0f", id(bme680_iaq).state);
+          }
+
+          // it.printf(0, 0, id(SEG24), iaq_color, "%3.0f", id(bme680_iaq).state);
 
           //оформление центра
           it.printf(64, 80, id(SEG24), white, TextAlign::CENTER, "%.0f", id(pm1).state);

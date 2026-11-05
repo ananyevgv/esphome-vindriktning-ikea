@@ -21,22 +21,41 @@
 
 
           // углекислый газ
+          Color co2_color = white;
+          switch ((int)id(bme680_co2).state) {
+            case 0 ... 600:    co2_color = green;   break;
+            case 601 ... 1000: co2_color = lgreen;  break;
+            case 1001 ... 1500: co2_color = yellow;  break;
+            case 1501 ... 2000: co2_color = lyellow; break;
+            case 2001 ... 5000: co2_color = red;     break;
+            default:           co2_color = tred;    break;
+          }
           if (id(bme680_co2).state >= 1000) {
-            it.printf(128, 0, id(SEG16), blue, TextAlign::TOP_RIGHT, "%.0f", id(bme680_co2).state);
+            it.printf(128, 0, id(SEG16), co2_color, TextAlign::TOP_RIGHT, "%.0f", id(bme680_co2).state);
           } else {
-            it.printf(70, 0, id(SEG24), blue, "%.0f", id(bme680_co2).state);
+            it.printf(70, 0, id(SEG24), co2_color, "%.0f", id(bme680_co2).state);
 
           }
-          // it.printf(70,0, id(SEG24), blue, "%3.0f", id(bme680_co2).state);
+          // it.printf(70,0, id(SEG24), co2_color, "%3.0f", id(bme680_co2).state);
 
           // органические вешества
+          // органические вешества — цвет по значению
+          Color voc_color = white;
+          switch ((int)id(bme680_voc).state) {
+            case 0 ... 50:    voc_color = green;   break;
+            case 51 ... 100:  voc_color = lgreen;  break;
+            case 101 ... 150: voc_color = yellow;  break;
+            case 151 ... 200: voc_color = lyellow; break;
+            case 201 ... 300: voc_color = red;     break;
+            default:          voc_color = tred;    break;
+          }
           if (id(bme680_voc).state >= 1000) {
-            it.printf(0, 0, id(SEG16), green, TextAlign::TOP_LEFT, "%.0f", id(bme680_voc).state);
+            it.printf(0, 0, id(SEG16), voc_color, TextAlign::TOP_LEFT, "%.0f", id(bme680_voc).state);
           } else {
-            it.printf(0, 0, id(SEG24), green, "%3.0f", id(bme680_voc).state);
+            it.printf(0, 0, id(SEG24), voc_color, "%3.0f", id(bme680_voc).state);
           }
 
-          // it.printf(0, 0, id(SEG24), green, "%3.0f", id(bme680_voc).state);
+          // it.printf(0, 0, id(SEG24), voc_color, "%3.0f", id(bme680_voc).state);
 
           // оформление центра
           it.printf(64, 80, id(SEG24), white, TextAlign::CENTER, "%.0f", id(pm10).state);

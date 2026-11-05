@@ -21,15 +21,35 @@
 
           
           // влажность
-          it.printf(70,0, id(SEG24), blue, "%2.0f", id(bme680_h).state);
+          // влажность — цвет по значению
+          Color hum_color = white;
+          switch ((int)id(bme680_h).state) {
+            case 0 ... 29:  hum_color = lyellow; break;
+            case 30 ... 40: hum_color = yellow;  break;
+            case 41 ... 60: hum_color = green;   break;
+            case 61 ... 70: hum_color = lgreen;  break;
+            default:        hum_color = blue;    break;
+          }
+
+          it.printf(70,0, id(SEG24), hum_color, "%2.0f", id(bme680_h).state);
           it.print(110, 0, id(icon_font), blue, "\U0000f87e");
           
           // температура
+          // температура — цвет по значению
+          Color temp_color = white;
+          switch ((int)id(bme680_t).state) {
+            case -100 ... 15: temp_color = blue;    break;
+            case 16 ... 18:   temp_color = lgreen;  break;
+            case 19 ... 24:   temp_color = green;   break;
+            case 25 ... 27:   temp_color = yellow;  break;
+            case 28 ... 30:   temp_color = lyellow; break;
+            default:          temp_color = red;     break;
+          }
           uint16_t vt = (id(bme680_t).state);
           float td;
           float tc = modff( vt, &td);
-          it.printf(0, 0, id(SEG24), green, "%2.0f.", td);
-          it.printf(40, 12, id(SEG12), green, "%1.0f", tc*10);
+          it.printf(0, 0, id(SEG24), temp_color, "%2.0f.", td);
+          it.printf(40, 12, id(SEG12), temp_color, "%1.0f", tc*10);
           it.print(38, 0, id(font11), green, "°С");
 
           // оформление центра
