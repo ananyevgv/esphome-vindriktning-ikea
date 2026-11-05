@@ -9,9 +9,9 @@
 
 ## 📸 Фотогалерея
 
-| Версия 1 | Версия 2 | Версия 3 |
+| Страница 1 | Страница 2 | Страница 3 |
 |----------|----------|----------|
-| <img src="./images/1704567361805.jpg" width="300"> | <img src="./images/v2.jpg" width="300"> | <img src="./images/ikeaV3.jpg" width="300"> |
+| <img src="./images/page1.jpg" width="300"> | <img src="./images/page2.jpg" width="300"> | <img src="./images/page3.jpg" width="300"> |
 
 ---
 
