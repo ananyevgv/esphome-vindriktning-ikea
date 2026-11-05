@@ -43,8 +43,8 @@
           int nak_grad = 7;
 
           // Максимальное значение, минимальное значение, начало и конец зоны индикации в градусах
-          float zmax = 800;
-          int zmin = 700;
+          float zmax = 805;
+          int zmin = 695;
           // 90+45 градусов
           int n_grad = 135; 
           // 360+45 градусов
@@ -65,7 +65,7 @@
               pressure_kor = -10; 
             }
 
-            float grad_ind_d = (n_grad + (id(pressure_3h).state - zmin + pressure_kor)*shag) *(PI / 180);
+            float grad_ind_d = (n_grad + (round(id(pressure_3h).state) - zmin + pressure_kor)*shag) *(PI / 180);
 
             // Верхняя точка вспомогательной стрелки
             int v_ind_y = centerY+(radius - otstup)*sin(grad_ind_d);
@@ -113,7 +113,7 @@
 
           ///////////////////////////////////////////////////////////////////////////////////    
           if (id(bme680_p).state > 0) {
-            float grad_ind = ((id(bme680_p).state - zmin) * shag + n_grad) *(PI/180);
+            float grad_ind = ((round(id(bme680_p).state) - zmin) * shag + n_grad) *(PI/180);
             // Верхняя точка стрелки
             int ind_y = centerY+(radius - otstup)*sin(grad_ind);
             int ind_x = centerX+(radius - otstup)*cos(grad_ind);
