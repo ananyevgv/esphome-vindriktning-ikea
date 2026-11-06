@@ -55,7 +55,7 @@
           float grad_n = nak_grad * (PI / 180);
 
           ///////////////////////////////////////////////////////////////////////////////////
-          if (id(pressure_3h).state != id(bme680_p).state) {
+          if (id(bme680_p).state > 0) {
 
             float pressure_kor =0;
             if (id(pressure_3h).state > id(bme680_p).state) {
