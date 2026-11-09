@@ -13,6 +13,8 @@
 |----------|----------|----------|
 | <img src="./images/page1.jpg" width="300"> | <img src="./images/page2.jpg" width="300"> | <img src="./images/page3.jpg" width="300"> |
 
+<img src="./images/ikea.jpg" width="300">
+
 ---
 
 ## 🎯 О проекте
